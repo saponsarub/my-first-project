@@ -2,7 +2,7 @@ SELECT
     YEAR(si.InvoiceDate) AS InvoiceYear,
     si.CustomerAccount,
     si.CustomerName,
-    AVG(si.LineAmount) AS AVGSell
+    COUNT(si.LineAmount) AS CountSell
 FROM syndpdev001.dbo.tb_SalesInvoice si
 WHERE si.SysCompanyId = 'DRPH'
 GROUP BY 
