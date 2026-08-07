@@ -22,6 +22,7 @@ FROM          (SELECT      OpenedDate, ClosedDate, Branch, BranchType, BranchNam
                                               a.[Address] LIKE '%fashion island%' OR
                                               a.[Address] LIKE '%fashionisland%' THEN 'In Mall' WHEN a.[Address] LIKE N'%บิ๊กซี%' OR
                                               a.[Address] LIKE '%bigc%' OR
+                                              a.[Address] LIKE '%BigC%' OR
                                               a.[Address] LIKE '%big c%' THEN 'In Mall' WHEN a.[Address] LIKE N'%ฟิวเจอร์พาร์ค%' OR
                                               a.[Address] LIKE '%futurepark%' OR
                                               a.[Address] LIKE '%future park%' THEN 'In Mall' WHEN a.[Address] LIKE N'%ไอทีพลาซ่า%' OR
