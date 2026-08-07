@@ -66,6 +66,7 @@ FROM          (SELECT      OpenedDate, ClosedDate, Branch, BranchType, BranchNam
                                               a.[Address] LIKE N'%กรุงเทพ%' OR
                                               trim(replace(a.[Address], '.', '')) LIKE N'%กทม%' OR
                                               a.[Province] LIKE N'%กรุงเทพ%' OR
+                                              a.[Province] LIKE N'%BKK%' OR
                                               a.[Province] LIKE 'Bangkok' OR
                                               a.[Address] LIKE N'%พระราม 3%' THEN 'Bangkok' WHEN a.[Address] LIKE N'%กาญจนบุรี%' THEN 'Kanchanaburi' WHEN a.[Address] LIKE N'%จันทบุรี%' THEN 'Chanthaburi' WHEN
                                                a.[Address] LIKE N'%ฉะเชิงเทรา%' THEN 'Chachoengsao' WHEN a.[Address] LIKE N'%ชลบุรี%' THEN 'Chonburi' WHEN a.[Address] LIKE N'%ชัยนาท%' THEN 'Chainat' WHEN
@@ -103,7 +104,7 @@ FROM          (SELECT      OpenedDate, ClosedDate, Branch, BranchType, BranchNam
                                               a.Province LIKE '%Ubon%' OR
                                               a.Province LIKE N'%อุบล%' THEN 'Ubon Ratchathani' WHEN a.[Address] LIKE N'%อำนาจเจริญ%' THEN 'Amnat Charoen' WHEN a.[Address] LIKE N'%แพร่%' THEN 'Phrae' WHEN
                                                a.[Address] LIKE N'%แม่ฮ่องสอน%' THEN 'Mae Hong Son' WHEN a.[Address] LIKE N'%ลำปาง%' THEN 'Lampang' WHEN a.[Address] LIKE N'%ลำพูน%' THEN 'Lamphun' WHEN
-                                               a.[Address] LIKE N'%สุโขทัย%' THEN 'Sukhothai' WHEN a.[Address] LIKE N'%อุตรดิตถ์%' THEN 'Uttaradit' WHEN a.[Address] LIKE N'%อุทัยธานี%' THEN 'Uthai Thani' WHEN a.[Address]
+                                               a.[Address] LIKE N'%สุโขทัย%q' THEN 'Sukhothai' WHEN a.[Address] LIKE N'%อุตรดิตถ์%' THEN 'Uttaradit' WHEN a.[Address] LIKE N'%อุทัยธานี%' THEN 'Uthai Thani' WHEN a.[Address]
                                                LIKE N'%ปทุมธานี%' THEN 'Pathum Thani' WHEN a.[Address] LIKE N'%ประจวบคีรีขันธ์%' OR
                                               a.[Address] LIKE N'%ประจวบ%' OR
                                               a.[Address] LIKE '%Prachuap%' OR
