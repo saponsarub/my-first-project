@@ -29,7 +29,7 @@ FROM          (SELECT      OpenedDate, ClosedDate, Branch, BranchType, BranchNam
                                               a.[Address] LIKE '%it plaza%' THEN 'In Mall' WHEN a.[Address] LIKE N'%เมกะ บางนา%' OR
                                               a.[Address] LIKE '%mega bangna%' OR
                                               a.[Address] LIKE '%megabangna%' THEN 'In Mall' WHEN a.[Address] LIKE N'%สยามดิสคัพเวอร์รี่%' THEN 'In Mall' WHEN a.[Address] LIKE N'%พารากอน%' THEN 'In Mall' WHEN
-                                               a.[Address] LIKE N'%เทอร์มินอล%' THEN 'In Mall' WHEN a.[Address] LIKE N'%อิมพีเรียล%' THEN 'In Mall' WHEN a.[Address] LIKE N'%มาบุญครอง%' THEN 'In Mall' WHEN a.[Address]
+                                               a.[Address] LIKE N'%เทอร์มินอน%' THEN 'In Mall' WHEN a.[Address] LIKE N'%อิมพีเรียล%' THEN 'In Mall' WHEN a.[Address] LIKE N'%มาบุญครอง%' THEN 'In Mall' WHEN a.[Address]
                                                LIKE N'%เมญ่า%' THEN 'In Mall' WHEN a.[Address] LIKE N'%เมเจอร์%' THEN 'In Mall' WHEN a.[Address] LIKE N'%เอ็มควอเทีย%' THEN 'In Mall' WHEN a.[Address] LIKE N'%เสามย่าน มิตรทาวน์%'
                                                THEN 'In Mall' WHEN a.[Address] LIKE N'%เท็อปส์%' THEN 'In Mall' WHEN a.[Address] LIKE '%mall%' THEN 'In Mall' WHEN a.[Address] LIKE '%index%' THEN 'In Mall'
                                                WHEN a.[Address] LIKE '%power mall%' THEN 'In Mall' WHEN a.[Address] LIKE N'%มหาวิทยาลัย%' THEN 'In University' WHEN a.[Address] IS NULL 
