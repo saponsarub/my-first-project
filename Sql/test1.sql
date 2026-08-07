@@ -73,7 +73,7 @@ FROM          (SELECT      OpenedDate, ClosedDate, Branch, BranchType, BranchNam
                                                a.[Address] LIKE N'%ตราด%' THEN 'Trat' WHEN a.[Address] LIKE N'%นครนายก%' THEN 'Nakhon Nayok' WHEN a.[Address] LIKE N'%นครปฐม%' THEN 'Nakhon Pathom' WHEN
                                                a.[Address] LIKE N'%นนทบุรี%' OR
                                               a.[Address] LIKE N'%นนบุรี%' OR
-                                              a.[Address] LIKE '%Nontha%' OR
+                                              a.[Address] LIKE '%Nonthaburi%' OR
                                               a.Province LIKE N'%นนทบุรี%' OR
                                               a.Province LIKE N'%นนบุรี%' OR
                                               a.Province LIKE '%Nontha%' THEN 'Nonthaburi' WHEN a.[Address] LIKE N'%ลพบุรี%' THEN 'Lopburi' WHEN a.[Address] LIKE N'%กำแพงเพชร%' THEN 'Kamphaeng Phet' WHEN
