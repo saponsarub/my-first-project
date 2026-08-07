@@ -1,12 +1,12 @@
 SELECT 
-    YEAR(si.InvoiceDate) AS InvoiceYear,
+    Month(si.InvoiceDate) AS InvoiceYear,
     si.CustomerAccount,
     si.CustomerName,
-    sum(si.LineAmount) AS CountSell
+    AVG(si.LineAmount) AS AVGtSell
 FROM syndpdev001.dbo.tb_SalesInvoice si
 WHERE si.SysCompanyId = 'DRPH'
 GROUP BY 
-    YEAR(si.InvoiceDate),
+    Month(si.InvoiceDate),
     si.CustomerAccount,
     si.CustomerName
 ORDER BY InvoiceYear, si.CustomerAccount;
