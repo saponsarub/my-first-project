@@ -17,7 +17,7 @@ FROM          (SELECT      OpenedDate, ClosedDate, Branch, BranchType, BranchNam
                                                LIKE N'%ศูนย์การค้า%' THEN 'In Mall' WHEN a.[Address] LIKE N'%เดอะมอลล์%' OR
                                               a.[Address] LIKE '%the mall%' THEN 'In Mall' WHEN a.[Address] LIKE N'%ซีคอน%' OR
                                               a.[Address] LIKE '%seacon%' THEN 'In Mall' WHEN a.[Address] LIKE N'%โฮมโปร%' OR
-                                              a.[Address] LIKE '%home pro%' OR
+                                              a.[Address] LIKE '%Home pro%' OR
                                               a.[Address] LIKE '%homepro%' THEN 'In Mall' WHEN a.[Address] LIKE N'%แฟชั่นไอส์แลน%' OR
                                               a.[Address] LIKE '%fashion island%' OR
                                               a.[Address] LIKE '%fashionisland%' THEN 'In Mall' WHEN a.[Address] LIKE N'%บิ๊กซี%' OR
