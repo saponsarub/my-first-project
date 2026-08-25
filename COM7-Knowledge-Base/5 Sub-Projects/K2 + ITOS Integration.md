@@ -1,0 +1,119 @@
+# K2 + ITOS Integration
+
+**สถานะ:** Data Preparation
+**ที่มา:** ClickUp `K2 & ITOS Integrated Loan System.txt` + `UFF/` ใน `C:\Projects\Data-Team-Code\`
+
+> ข้อมูลของตัวระบบเอง (schema, ตาราง, field) อยู่ที่ [[../3 Source System Survey/UFUND (K2 & ITOS)|UFUND (K2 & ITOS)]]
+
+---
+
+## เป้าหมาย
+
+> "บริษัทมีเเผนที่จะรวม Data K2 ITOS มาเป็นระบบเดียว เพื่อง่ายต่อการวิเคราะห์ Data เป็นการสร้าง Full loan system ตั้งเเต่ APP In → Scoring → Approve → Collection → Close Case"
+
+ปัจจุบันวงจรสินเชื่อถูกแยกอยู่คนละระบบที่สร้างคนละยุค จึงไม่มีมุมมองสัญญาแบบครบวงจร `[อนุมาน]`
+
+---
+
+## ความคืบหน้า
+
+**Task Done**
+- Business Understanding
+- Data Understanding — ขอ data dic และทำความเข้าใจจากทั้ง K2 (พี่เนตร) และ ITOS (พี่ต้น)
+
+**Task In Progress**
+- Data Preparation — กำลัง clean ข้อมูล และออกแบบ table ที่รองรับทั้ง 2 ระบบ
+- เตรียมรวม data เข้ามาในถังของพี่คอง
+
+---
+
+## แผน migrate 3 ช่วง
+
+```
+ช่วงที่ 1:  K2 ──┐
+                 ├──► Unified
+            ITOS ─┘
+
+ช่วงที่ 2:  K2 ──────► Unified
+            ITOS ────► Unified
+                         │
+                         ▼
+                  ตรวจสอบข้อมูล
+                         │
+                         ▼
+                K2 ค่อย ๆ ลดการใช้งาน
+
+ช่วงสุดท้าย: K2 ──X
+            ITOS ─────────► Unified
+```
+
+---
+
+## 2 แผนการสร้าง
+
+ทั้งคู่เริ่มเหมือนกัน:
+
+> "Schema Mapping (ในexcel) เช็ค column /datatype ให้ตรงกัน (ปรับ Column / Data Type ใหม่)"
+
+| | UnionPlan1 | UnionPlan2 |
+|---|---|---|
+| หลังจาก mapping | "Direct Union From 2 database" → "Insert into (Create new table)" | **"create Schema เปล่าๆ มา กำหนด datatype ใหม่, pkใหม่ (ID) เพิ่ม column ระบุว่า migrate มาจากไหน"** → "Insert data จากทั้ง 2 table เข้า new table (Union) ทีละ table" |
+| ต่อไป | Stored Procedure Incremental → กำหนด schedule Update/Insert | เหมือนกัน |
+
+**UnionPlan2 ดีกว่าตรงที่** schema เป้าหมายถูกออกแบบตั้งใจ ไม่ใช่สืบทอดจาก source ที่รันก่อน · มีคอลัมน์ระบุที่มา · ทำทีละ table validate ง่ายกว่า `[อนุมาน]`
+
+---
+
+## คิวรี่ที่ทำไว้แล้ว
+
+`K2_U_ITOS_P1.sql` — union จริงที่รันได้
+
+```sql
+SELECT <คอลัมน์ที่ CAST/COLLATE แล้ว>, 'ITOS' as SOURCE_SYSTEM
+FROM [ILOAN_DATASOURCE].[ILOAN_DATASOURCE].[dbo].[ITOS_COLLECTION_DETAIL] a
+UNION ALL
+SELECT <คอลัมน์ที่ map กัน>, 'K2' as SOURCE_SYSTEM
+FROM HPCOM7.dbo.COLLECTION_OD_ASSIGNMENT b
+```
+
+คอลัมน์ `SOURCE_SYSTEM` implement แล้วจริง — ตรงกับหลักการที่ตกลงในงาน customer identity ด้วย ([[../2 AWS Data Lake/Decisions|D-07]])
+
+**Domain ที่ record รวมครอบคลุม:** contract · financial · schedule · ค้างชำระ · assignment · **ข้อมูลลูกค้า** (วันเกิด โทร ชื่อ ที่อยู่ 3 แบบ อาชีพ) · product · **ผู้ค้ำประกัน**
+
+---
+
+## ปัญหาที่คิวรี่นี้เปิดเผย
+
+สรุป — รายละเอียดเต็มอยู่ที่ [[../4 SSOT & Customer 360/Data Standardization & Quality|Data Standardization & Quality]]
+
+- สะกดต่างกัน: `TOTAL_PRINCIPAL` (ITOS) vs `TOTAL_PRINCIPLE` (K2)
+- typo ใน production: `PRODUCT_ID` vs `PRODUDCT_ID`
+- ชื่อต่างความหมายเดียวกัน: `PRODUCT_NAME` vs `MODEL_NAME`
+- ต้อง `CAST` เกือบทุกคอลัมน์
+- ต้อง `COLLATE DATABASE_DEFAULT` ทุกคอลัมน์ข้อความ
+- K2 ไม่มี `PRODUCT_MODEL`, `PRODUCT_SERIAL_NO`, `CREATE_DATE`, `MODIFY_DATE`
+- ที่อยู่คนละโครงสร้าง — K2 เก็บ 3 คอลัมน์ / ITOS แยกตาราง `S_CUSTADDR`
+
+---
+
+## ความสัมพันธ์กับงาน AWS
+
+โปรเจกต์นี้อยู่**เหนือน้ำ**ของงาน lake — รวมที่ต้นทางก่อน แปลว่า lake จะ ingest ระบบสินเชื่อที่สะอาดหนึ่งระบบ แทนสองระบบที่ขัดกัน `[อนุมาน]`
+
+และเป็นการซ้อมที่ดี เพราะปัญหา standardization ที่เจอตรงนี้เป็นชนิดเดียวกับที่อีก 10 ระบบจะมี `[อนุมาน]`
+
+---
+
+## คำถามที่ยังเปิด
+
+- K2 กับ ITOS มีข้อมูลสัญญาเดียวกันซ้ำกันไหม
+- K2 table ไหนยัง update อยู่จริง (สำคัญต่อแผนเลิกใช้)
+- พอรวมแล้ว lake จะ ingest ระบบรวม หรือ 2 source
+- "ถังของพี่คอง" คืออะไรในเชิง AWS — S3 bucket หรือ staging DB
+- **ข้อมูลผู้ค้ำประกัน** จะใช้หรือไม่ใช้ (ความเห็นล่าสุด: น่าจะไม่ใช้ เพราะไม่ใช่ลูกค้าจริง)
+
+---
+
+## อ่านต่อ
+
+[[../3 Source System Survey/UFUND (K2 & ITOS)|UFUND (K2 & ITOS)]] · [[../4 SSOT & Customer 360/Data Standardization & Quality|Data Standardization & Quality]] · [[../6 Technical/SQL & Source Schemas|SQL & Source Schemas]]
