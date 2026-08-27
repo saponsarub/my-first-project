@@ -12,7 +12,7 @@
 |---|---|---|---|
 | **1** | **Data Framework** | **มาตรฐาน**ที่ MIS ออกให้ทั้งเครือ + เป้าหมาย SSOT | เขียนแล้ว |
 | **2** | **AWS Data Lake** | **โปรเจกต์หลัก** — PoC / Pilot / Production | PoC กำลังทำ |
-| **3** | **Source System Survey** | สำรวจ 11 ระบบต้นทาง | **เสร็จ 1/11** |
+| **3** | **Source System Survey** | สำรวจ 11 ระบบต้นทาง | **เสร็จ 2/11** (+ K2) |
 | **4** | **SSOT & Customer 360** | 3 ปัญหาที่ยากจริง — identity, consent, standardization | ยังไม่เริ่มแก้ |
 | **5** | **Sub-Projects** | โปรเจกต์ย่อยที่เดินคู่ขนาน | กำลังทำ |
 | 6 | Technical | ความรู้เทคนิค AWS / ETL / SQL / Analytics | อ้างอิง |
@@ -31,9 +31,12 @@
 | ตกลงอะไรไปแล้ว | [[2 AWS Data Lake/Decisions\|Decisions]] |
 | ติดอะไรอยู่ | [[2 AWS Data Lake/Open Questions & Risks\|Open Questions & Risks]] |
 | ระบบไหนเก็บอะไร ใครดูแล | [[3 Source System Survey/System Inventory\|System Inventory]] |
+| **ตาราง K2 ตัวไหนเก็บอะไร** | [[3 Source System Survey/K2 (HPCOM7)/K2 Overview\|K2 (HPCOM7)]] |
+| **ขอที่อยู่/ชื่อ/สัญญาของลูกค้า K2** | [[3 Source System Survey/K2 (HPCOM7)/Query Cookbook\|K2 Query Cookbook]] |
 | **ลูกค้าซ้ำ** แก้ยังไง | [[4 SSOT & Customer 360/Customer Identity\|Customer Identity]] |
 | **PDPA** ติดตรงไหน | [[4 SSOT & Customer 360/Consent & PDPA\|Consent & PDPA]] |
 | งาน **K2 + ITOS** ถึงไหน | [[5 Sub-Projects/K2 + ITOS Integration\|K2 + ITOS Integration]] |
+| **UFUND เข้า Customer 360 ยังไง** | [[4 SSOT & Customer 360/UFUND in Customer 360\|UFUND in Customer 360]] |
 | งาน **GI + EV7 → 7Club** ถึงไหน | [[5 Sub-Projects/GI + EV7 to 7Club\|GI + EV7 → 7Club]] |
 | เขียน Glue job ยังไง | [[6 Technical/ETL & Spark\|ETL & Spark]] |
 | ศัพท์นี้แปลว่าอะไร | [[7 Reference/Glossary\|Glossary]] |
@@ -56,7 +59,7 @@
 | ขนาด lake | 30 TB | AWS Proposal |
 | ข้อมูลเข้า / ออก | ~50 GB/วัน · ~1 TB/วัน | AWS Proposal |
 | Pipeline | ~30 เส้น | AWS Proposal |
-| Survey เสร็จ | **1 จาก 11 ระบบ** | Project Timeline |
+| Survey เสร็จ | **2 จาก 11 ระบบ** (ITEC, K2) | Project Timeline · survey K2 จากฐานจริง 2026-08-26 |
 | ความพร้อมข้อมูลลูกค้า | **9 มี / 17 ไม่พอ / 62 ขาด (จาก 88)** | Customer Data Gap Review |
 | ช่วงเวลา | ส.ค. 2569 – ก.พ. 2570 | Project Timeline |
 

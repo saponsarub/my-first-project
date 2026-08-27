@@ -31,6 +31,11 @@ vault เวอร์ชันแรกอ้างไฟล์นี้เป�
 | 8 | `D:\aws\etl-lab\athena performance.xlsx` + `.pptx` | 45 query runs | ผลวัด performance จริง |
 | 9 | `D:\Project Timeline _ Data Team.xlsx` | Timeplan · 11 ระบบ + phase | สถานะ survey, เจ้าของ, ลำดับ phase |
 | 10 | `D:\Azure\` (2 PDF โดย Alphametrics) | คู่มือและ training Azure Synapse | เอกสาร platform เดิม |
+| 16 | **ประชุม K2 & ITOS 2026-08-27** | ทิศทาง migration · UFUND Student · NCB · Payment/Collection ใน Customer 360 | ปิดคำถามว่า lake จะ ingest อะไร และ K2 จะอยู่ต่อไหม → [[../4 SSOT & Customer 360/UFUND in Customer 360\|UFUND in Customer 360]] |
+| 15 | **`ค่าปรับ ค่าติดตาม.pdf`** — นโยบาย UFUND | POLICIES UPDATED · อัตราค่าปรับ/ค่าติดตามตามขั้น OD · ลำดับการตัดรับชำระ | ตรวจกับ `COLLECTION_OD` แล้วตรงเกือบทุกช่อง → [[../3 Source System Survey/K2 (HPCOM7)/Fee Policy\|Fee Policy]] · สำเนาที่ `_raw/UFUND-policy-ค่าปรับ-ค่าติดตาม.pdf` |
+| 14 | **`ตัวอย่างข้อมูลที่ใช้ในหนังสือบอกเลิกสัญญา.xlsx`** | 33 คอลัมน์ · 3 ตัวอย่างที่ทีมกรอกไว้ | ถอดสูตรได้ว่าหนังสือบอกเลิกสัญญาดึงข้อมูลจากตารางไหนบ้าง → [[../3 Source System Survey/K2 (HPCOM7)/Termination Letter Mapping\|Termination Letter Mapping]] |
+| 13 | **`# K2 Database.md` — ชุดความรู้ของทีม** | กฎธุรกิจที่คนใช้งานรู้: วันชำระ 1 และ 16, `RECEIPT_NUMBER` = ชำระแล้ว, ความหมาย `GUARANTOR` / `MT_COLLECTION_COLLECTOR`, เส้นทาง join | สิ่งที่ schema บอกไม่ได้ · ตรวจกับฐานจริงทุกข้อแล้ว → [[../3 Source System Survey/K2 (HPCOM7)/Business Rules\|Business Rules]] · สำเนาที่ `_raw/team-knowledge-K2-Database.md` |
+| 12 | **ฐาน `HPCOM7` (K2) โดยตรง** | สำรวจ metadata + sample แบบ mask เมื่อ 2026-08-26 ด้วย `k2_survey.py` / `k2_samples.py` (read-only) | โครงสร้าง 542 tables, จำนวนแถว, index, join path ที่ทดสอบแล้ว → [[../3 Source System Survey/K2 (HPCOM7)/K2 Overview\|K2 (HPCOM7)]] |
 | 11 | `C:\Projects\Data-Team-Code\` | SQL ที่ทีมใช้จริง + บันทึกออกแบบ AWS (Medalion Archetecture, POC_reveiw) | ชื่อฐานข้อมูลจริง, นิยาม layer, คิวรี่ union K2/ITOS |
 
 ---
@@ -46,6 +51,9 @@ vault เวอร์ชันแรกอ้างไฟล์นี้เป�
 | `M_CHANNEL` เป็นช่องทางชำระเงิน | อ่าน table wiki ของ ITOS | **Dtac ในนี้คือจุดรับชำระ ไม่ใช่ร้านในเครือ** — แก้ความเข้าใจผิดจาก brief |
 | `D365FO_DATALAKE`, `syndpdev001` | SQL ใน Data-Team-Code | ชื่อฐาน/server จริงเบื้องหลัง D365 และ Synapse |
 | `ILOAN_DATASOURCE`, `HPCOM7` | คิวรี่ union K2/ITOS | ฐานจริงของ ITOS และ K2 |
+| **`PERSON.TAX_ID` = เลขบัตรประชาชน** | query `HPCOM7` ตรง | ปิดคำถามเปิดว่า K2 เก็บเลขบัตรที่ไหน — มี 404,627 จาก 404,749 แถว |
+| **`ZZ_PRODUCT_K2_ITOS_mapping`** | ไล่ดูตารางใน `HPCOM7` | มีคนทำ mapping สินค้า K2↔ITOS ไว้แล้ว 593 แถว เมื่อ ก.ย. 2025 |
+| **`STATEMENT_FILE_PASSWORD`** | ไล่ดูตารางใน `HPCOM7` | รหัสผ่านไฟล์ statement ธนาคาร 79,067 แถวอยู่ในฐาน — ประเด็น security |
 | AION DMS, EV7CORE, EVTRACKING | ClickUp GI+EV7 | ระบบฝั่ง EV ที่ทับซ้อนกัน |
 
 ---
@@ -59,7 +67,7 @@ vault เวอร์ชันแรกอ้างไฟล์นี้เป�
 | `C:\Projects\Data-Team-Code\.vs\`, `.git\` | ไฟล์ภายในของ IDE/VCS |
 | `D:\aws\Test_Spark\`, `D:\aws\etl-lab\` (โค้ด) | lab ฝึก ETL ส่วนตัว ไม่ใช่ production ของ COM7 — อ้างเฉพาะปัญหา Spark ANSI mode ที่เจอจริง และระบุที่มาไว้ชัด |
 | `D:\UI Guideline.pptx` | ไม่เกี่ยวกับสถาปัตยกรรมข้อมูล |
-| `C:\Projects\my-first-project\` | repo ฝึก Git มีแค่ query ITOS 1 อัน |
+| `C:\Projects\my-first-project\` | repo ฝึก Git — **แต่ `DatabaseK2.py` ในนั้นคือจุดตั้งต้นของ survey K2** และมี credential ฐาน production hardcode อยู่ |
 
 ---
 

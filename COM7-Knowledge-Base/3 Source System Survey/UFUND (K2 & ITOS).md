@@ -1,6 +1,8 @@
 # UFUND (K2 & ITOS)
 
-Survey กำลังทำ · K2 โดย MIS-Fintech · ITOS โดย K.Ton
+Survey — **K2 Done (2026-08-26)** · ITOS Done · K2 โดย MIS-Fintech · ITOS โดย K.Ton
+
+> **K2 กำลังถูกเลิกใช้** — ประชุม 2026-08-27 ระบุว่า migrate ไป ITOS ครบ 100% ภายในสิ้นปี 2026 ยกเว้น UFUND Student → [[../4 SSOT & Customer 360/UFUND in Customer 360|UFUND in Customer 360]]
 
 ---
 
@@ -102,35 +104,66 @@ wiki เตือนว่า *"Counts can reset after server restarts or index 
 
 ## K2
 
-**Physical:** ฐาน `HPCOM7` · table ที่ยืนยันแล้วคือ `HPCOM7.dbo.COLLECTION_OD_ASSIGNMENT`
-Data dictionary ได้จากพี่เนตร
+Survey **Done** — สำรวจฐาน `HPCOM7` โดยตรงเมื่อ 2026-08-26 · **542 tables · 165 views**
 
-### Field ที่เห็นจากคิวรี่ union
+> รายละเอียดทั้งหมดอยู่ในโฟลเดอร์ **[[K2 (HPCOM7)/K2 Overview|K2 (HPCOM7)]]**
+> อยากได้ที่อยู่/ชื่อ/สัญญาของลูกค้าคนหนึ่ง → [[K2 (HPCOM7)/Query Cookbook|Query Cookbook]]
 
-Contract: `CONTRACT_ID`, `CONTRACT_NUMBER`, `CONTRACT_STATUS`, `CONTRACT_STATUS_DESC`, `PRODUDCT_ID`, `PRODUCT_TYPE`, `UPDATE_DATE`
+**Physical:** MSSQL ฐาน `HPCOM7` · schema `dbo` ทั้งหมด · เจ้าของงาน MIS-Fintech
 
-Financial: `TOTAL_OUTSTANDING`, `TOTAL_PRINCIPLE`, `TOTAL_INTEREST`, `TOTAL_VAT`, `NUMBER_OF_PERIOD`, `INSTALLMENT_PER_PERIOD` และชุด `PAID_*`, `REMAINING_*`, `*_TO_DUE`
+### โครงหลัก
 
-Schedule: `PERIOD_DUE_DATE`, `LAST_REPAY_DATE`, `INVOICE_NUMBER`, `INVOICE_DATE`
+```
+QUOTATION → APPLICATION → CONTRACT → CUSTOMER_CARD → INVOICE → REPAYMENT → ACCOUNT
+ 801,188     410,306       288,205    5,816,540       4,396,632  5,205,081   25,977,656
 
-ค้างชำระ: `NUMBER_OF_OD_INSTALLMENT`, `OD_AMOUNT`, `PENALTY_AMT`, `COLLECT_AMT`, `TOTAL_FOLLOW_UP_AMOUNT`, `IS_FIRST_DUE`, `IS_LAST_DUE`
+PERSON (404,749) ──1:1──► ADDRESS (403,283)
+```
 
-Assignment: `ASSIGN_TO_TEAM`, `EMP_CODE`, `EMP_NAME`
+| | |
+|---|---:|
+| สัญญาทั้งหมด | 288,205 (ตั้งแต่ 2020-07) |
+| ที่ยังผ่อนอยู่ | 93,214 |
+| บุคคลในระบบ | 404,749 |
+| **เลขบัตรไม่ซ้ำ** | **343,249** |
+| กลุ่มลูกค้า | **Student 73,209 · Personal 47,370** (จากสัญญาที่มีหนี้ค้าง) |
+| สินค้า | Smart Phone · Tablet · Laptop (Apple, Samsung, Xiaomi, Vivo, OPPO, Realme) |
+| ร้านที่ขาย | COM7 283,144 · UFICON 2,968 · SPVI 1,885 |
 
-ลูกค้า: `CUSTOMER_BIRTH_DATE`, `CUSTOMER_PHONE_NUM`, `CUSTOMER_NAME`, `CUSTOMER_ADDRESS_REGISTER`, `CUSTOMER_ADDRESS_CURRENT`, `CUSTOMER_ADDRESS_DELIVERY`, `CUSTOMER_OCCUPATION`
+### สิ่งที่แก้ความเข้าใจเดิม
 
-ผู้ค้ำ: `GUARANTOR_NAME`, `GUARANTOR_RELATION`, `GUARANTOR_PHONE_NUM`
+**1. เลขบัตรประชาชนอยู่ที่ `PERSON.TAX_ID`** — มีค่า 404,627 จาก 404,749 แถว และมี index
+คำถามเดิม *"K2 มีเลขบัตรที่ไหนนอก collection extract ไหม"* → **ปิดแล้ว**
+(`CARD_CODE` ไม่ใช่เลขบัตร เป็นรหัสประเภทบัตร มีแค่ค่า 1 กับ 3)
+
+**2. ที่อยู่แตกเป็นฟิลด์ย่อยครบ ไม่ใช่ 3 คอลัมน์ข้อความ** — `ADDRESS` เก็บ **5 ชุด** (ตามทะเบียน / ปัจจุบัน / ติดต่อได้ / จัดส่ง / ที่ทำงาน) แต่ละชุดมีบ้านเลขที่ หมู่ ซอย ถนน ตำบล อำเภอ จังหวัด รหัสไปรษณีย์ และ**พิกัด**
+3 คอลัมน์ข้อความที่เคยเห็นเป็นแค่รูปแบบใน extract ของ collection ไม่ใช่ต้นทาง
+
+**3. ทำ incremental ด้วย timestamp ได้** — `PERSON`, `CONTRACT`, `APPLICATION`, `QUOTATION`, `REPAYMENT` มี `CREATE_DATE` + `UPDATE_DATE` ครบ
+ข้อสรุปเดิมว่าทำไม่ได้ มาจากดู `COLLECTION_OD_ASSIGNMENT` ตารางเดียวซึ่งเป็น extract
 
 ### ข้อสังเกต
 
-**ที่อยู่เก็บเป็น 3 คอลัมน์** (register / current / delivery) ต่างจาก ITOS ที่แยกเป็นตาราง `S_CUSTADDR` — สองรูปแบบนี้รวมกันไม่ตรงไปตรงมา `[อนุมาน]`
+**ไม่มี foreign key** — 16 ตัวจาก 542 ตาราง สร้าง ER อัตโนมัติไม่ได้ ต้องพิสูจน์ relation ด้วยการ join จริง
 
-**ไม่มี `CREATE_DATE` / `MODIFY_DATE`** — คิวรี่ union ต้องใส่ `CAST(NULL as date)` แทน
-ผลคือ **ดึง incremental ด้วย timestamp จาก K2 ไม่ได้** ต้องใช้ CDC หรือ full reload `[อนุมาน]`
+**ลูกค้าซ้ำในระบบเดียว** — 404,627 แถวที่มีเลขบัตร → 343,249 เลขบัตรไม่ซ้ำ · **1,577 เลขบัตรสะกดชื่อไม่ตรงกัน** · เลขบัตรที่ซ้ำมากที่สุดมี 44 แถว
+`PERSON` เป็น 1 แถวต่อ 1 ใบคำขอ ไม่ใช่ทะเบียนลูกค้า — ยื่นใหม่ = `PERSON_ID` ใหม่
 
-**ไม่พบคอลัมน์เลขบัตรประชาชนในคิวรี่ union นี้** — แต่คิวรี่นี้เป็นแค่ collection extract ไม่ใช่ทั้งระบบ K2 **ยังสรุปไม่ได้ว่า K2 ไม่มีเลขบัตร ต้องถาม MIS-Fintech**
+**`CIF_PERSON_ID` มีคอลัมน์แต่ว่าง 404,645 จาก 404,749** — ตั้งใจทำ CIF แล้วไม่ได้ทำ
 
----
+**`CUSTOMER_CARD` ไม่ใช่ตารางลูกค้า** — เป็นการ์ดลูกหนี้ 1 แถวต่อ 1 งวดผ่อน (5.8M แถว)
+
+**`CreditScrolling_Logs_Contract` 239.7 ล้านแถว** = 66% ของแถวทั้งฐาน ต้องตัดสินก่อน ingest
+
+**`STATEMENT_FILE_PASSWORD` 79,067 แถว** — รหัสผ่านไฟล์ statement ธนาคารลูกค้าอยู่ในฐาน **ห้าม ingest**
+
+**เก็บไฟล์เป็น base64 ในคอลัมน์จริง** — ยืนยันจาก `SETUP_COMPANY.C_LOGO` และ `REGISTRATION_DOC` ที่มี PDF ฝังอยู่ · `PERSON` มีคอลัมน์ไฟล์แบบเดียวกันสำหรับสำเนาบัตร รูปหน้า และ statement
+
+**`ZZ_PRODUCT_K2_ITOS_mapping` (593 แถว · ก.ย. 2025)** — มีคนทำ mapping สินค้า K2↔ITOS ไว้แล้วในฐาน ต้องไปดูก่อนเริ่มใหม่
+
+**ไม่พบรหัส ธปท.** แบบที่ ITOS มี 3 คอลัมน์
+
+**สิทธิ์ที่ยังขาด** — `VIEW SERVER STATE` (ดู usage stats ไม่ได้) และ `VIEW DEFINITION` (อ่าน SQL ของ view 165 ตัวไม่ได้ · 65 ตัวเป็น `EGG_*`)
 
 ## โปรเจกต์รวม K2 + ITOS
 
@@ -138,10 +171,9 @@ Assignment: `ASSIGN_TO_TEAM`, `EMP_CODE`, `EMP_NAME`
 
 ## คำถามที่ยังเปิด
 
-- K2 component/table ไหนยัง update อยู่จริง
+*(คำถามเรื่องรายการ table ของ K2, เลขบัตรประชาชน และ table ที่ยัง update อยู่ — ปิดแล้วโดย survey 2026-08-26 ดู [[K2 (HPCOM7)/K2 Overview|K2 Overview]])*
+
 - K2 กับ ITOS มีข้อมูลสัญญาเดียวกันซ้ำกันไหม
-- K2 มีเลขบัตรประชาชนที่ไหนนอก collection extract ไหม
-- รายการ table ทั้งหมดของ K2 คืออะไร (ยืนยันแค่ตารางเดียว)
 - ITOS ยัง update อยู่ไหม
 - `ILOAN_COLLECTION` กับ `ILOAN_DATASOURCE` refresh บ่อยแค่ไหน
 - พอรวมแล้ว lake จะ ingest ระบบรวม หรือ 2 source
@@ -151,4 +183,4 @@ Assignment: `ASSIGN_TO_TEAM`, `EMP_CODE`, `EMP_NAME`
 
 ## อ่านต่อ
 
-[[System Inventory]] · [[../4 SSOT & Customer 360/Data Standardization & Quality|Data Standardization & Quality]] · [[../4 SSOT & Customer 360/Customer Identity|Customer Identity]] · [[../6 Technical/SQL & Source Schemas|SQL & Source Schemas]]
+[[K2 (HPCOM7)/K2 Overview|K2 (HPCOM7)]] · [[System Inventory]] · [[../4 SSOT & Customer 360/Data Standardization & Quality|Data Standardization & Quality]] · [[../4 SSOT & Customer 360/Customer Identity|Customer Identity]] · [[../6 Technical/SQL & Source Schemas|SQL & Source Schemas]]

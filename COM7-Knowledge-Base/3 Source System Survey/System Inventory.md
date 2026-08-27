@@ -13,7 +13,7 @@
 | Ref | ระบบ | สถานะ | ผู้รับผิดชอบ |
 |---|---|---|---|
 | 1.1.1 | [[ITEC]] | **Done** | Data Team |
-| 1.1.2.1 | [[UFUND (K2 & ITOS)\|K2]] (UFund) | In-Progress | MIS-Fintech |
+| 1.1.2.1 | [[UFUND (K2 & ITOS)\|K2]] (UFund) | **Done** (survey ฐานจริง 2026-08-26) | MIS-Fintech |
 | 1.1.2.2 | [[UFUND (K2 & ITOS)\|ITOS]] (UFund) | In-Progress | K.Ton |
 | 1.1.3 | [[EV Business (GI Core & EV7)\|GI Core]] | Todo | Punt, Nut |
 | 1.1.4 | [[Other Systems\|D365]] | Todo | MIS-ERP |
@@ -24,7 +24,9 @@
 | 1.2.1 | [[Customer Platforms (CRM, 7Club, Braze)\|7Club+/CRM]] | Todo | P.Por |
 | 1.2.2 | [[Other Systems\|Tech Trade]] | Todo | K.Koj, K.Poj |
 
-**เสร็จ 1 จาก 11** — งานนี้เป็นคอขวดของทุกอย่าง
+**เสร็จ 2 จาก 11** — งานนี้เป็นคอขวดของทุกอย่าง
+
+> K2 เลื่อนจาก In-Progress เป็น Done เพราะสำรวจฐาน `HPCOM7` โดยตรงครบ 542 tables เมื่อ 2026-08-26 ผลอยู่ที่ [[K2 (HPCOM7)/K2 Overview|K2 (HPCOM7)]] — **ยังไม่มีเอกสารจาก MIS-Fintech ยืนยัน** สถานะนี้อ้างจากการสำรวจของทีมเราเอง
 
 ---
 
@@ -33,7 +35,7 @@
 | ระบบ | ธุรกิจ | ทำอะไร | สถานะ | ที่มา |
 |---|---|---|---|---|
 | [[ITEC]] | ค้าปลีก IT | ฐานข้อมูลหลักธุรกิจค้าปลีก · เป็นระบบเดียวที่ป้อนข้อมูลเข้า CRM ตอนนี้ | Confirmed | Timeline · Data Framework · SQL |
-| [[UFUND (K2 & ITOS)\|K2]] | สินเชื่อ | DB+app เดิมของ UFUND · ฐาน `HPCOM7` | Partially Confirmed | union SQL · ClickUp |
+| [[K2 (HPCOM7)/K2 Overview\|K2]] | สินเชื่อเช่าซื้อ IT **(legacy — ปิดสิ้นปี 2026)** | ฐาน `HPCOM7` · **542 tables · 288,205 สัญญา · 343,249 เลขบัตรไม่ซ้ำ** · กลุ่มหลักคือนักศึกษา | **Confirmed** | survey ฐานจริง 2026-08-26 |
 | [[UFUND (K2 & ITOS)\|ITOS]] | สินเชื่อ (collection) | `ILOAN_COLLECTION` 55 tables · ลูกค้า 165,722 ราย | Confirmed | schema wiki |
 | [[EV Business (GI Core & EV7)\|GI Core]] | EV / AION | ระบบหลักปัจจุบันฝั่ง GI · MySQL 166 Prisma models | Confirmed | schema.prisma · ClickUp |
 | [[Other Systems\|D365]] | ERP / GI เก่า | ข้อมูลผ่าน `D365FO_DATALAKE` | To Verify | Timeline · SQL |
@@ -57,7 +59,7 @@
 | `PROJECT_1` | view ของ ITEC (`view_itec_payment`) | ไม่รู้ว่าเป็น source หรือชั้น reporting |
 | `TAN_MIS` | query ของ MIS | ไม่รู้ |
 | `ILOAN_DATASOURCE` | extract ของ ITOS | น่าจะเป็นชั้น extract เหนือ ITOS `[อนุมาน]` |
-| `HPCOM7` | K2 collection assignment | น่าจะเป็นฐานจริงของ K2 `[อนุมาน]` |
+| `HPCOM7` | K2 ทั้งระบบ | **ยืนยันแล้ว** — เป็นฐานจริงของ K2 สำรวจครบ 2026-08-26 |
 | `D365FO_DATALAKE` | inventory/purchasing ของ D365 | เป็น data lake export ของ D365 F&O `[อนุมาน]` |
 | `syndpdev001` | item master, sales/purchase invoice | น่าจะเป็น Synapse dev endpoint `[อนุมาน]` |
 

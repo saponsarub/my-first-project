@@ -1,7 +1,9 @@
 # K2 + ITOS Integration
 
 **สถานะ:** Data Preparation
-**ที่มา:** ClickUp `K2 & ITOS Integrated Loan System.txt` + `UFF/` ใน `C:\Projects\Data-Team-Code\`
+**ที่มา:** ClickUp `K2 & ITOS Integrated Loan System.txt` + `UFF/` ใน `C:\Projects\Data-Team-Code\` + **ประชุม 2026-08-27**
+
+> **มติเรื่องทิศทางระบบและ Customer 360** → [[../4 SSOT & Customer 360/UFUND in Customer 360|UFUND in Customer 360]]
 
 > ข้อมูลของตัวระบบเอง (schema, ตาราง, field) อยู่ที่ [[../3 Source System Survey/UFUND (K2 & ITOS)|UFUND (K2 & ITOS)]]
 
@@ -24,6 +26,24 @@
 **Task In Progress**
 - Data Preparation — กำลัง clean ข้อมูล และออกแบบ table ที่รองรับทั้ง 2 ระบบ
 - เตรียมรวม data เข้ามาในถังของพี่คอง
+
+---
+
+## ทิศทางที่ตกลงในประชุม 2026-08-27
+
+**ITOS คือปลายทาง · K2 คือระบบที่กำลังถูกเลิกใช้** — ไม่ใช่สองระบบคู่ขนานอย่างที่เคยเข้าใจ
+
+| | |
+|---|---|
+| ยุคแรก | UFUND ใช้ **K2** เป็นระบบหลัก |
+| บริษัทโตขึ้น | เปลี่ยนมาใช้ **iLoan บน ITOS** เป็นระบบหลัก |
+| ปัจจุบัน | migration **ยังไม่เสร็จ** ข้อมูลอยู่ทั้งสองที่ |
+| **เป้าหมาย** | **migrate ครบ 100% ภายในสิ้นปี 2026** |
+| ข้อยกเว้น | **UFUND Student** อาจอยู่บน K2 ต่อ |
+
+**หลักฐานจากฐานที่สนับสนุน** — สัญญาใหม่ใน K2 ปี 2024 = 81,476 · ปี 2025 = 102,809 · **ปี 2026 ถึง ส.ค. = 16,567** ตกลงเหลือ ~16% ของปีก่อน
+
+> ⚠️ **มีผลต่อแผน lake** — ถ้า K2 ปิดสิ้นปี 2026 pipeline จาก K2 ควรคิดเป็น **historical load ครั้งเดียว** ไม่ใช่ pipeline ที่ต้องดูแลระยะยาว `[อนุมาน]`
 
 ---
 
@@ -106,9 +126,9 @@ FROM HPCOM7.dbo.COLLECTION_OD_ASSIGNMENT b
 
 ## คำถามที่ยังเปิด
 
+*(ปิดแล้วจากประชุม 2026-08-27: K2 table ไหนยัง update · lake จะ ingest อะไร → **ITOS primary · K2 historical** ดู [[../4 SSOT & Customer 360/UFUND in Customer 360|UFUND in Customer 360]])*
+
 - K2 กับ ITOS มีข้อมูลสัญญาเดียวกันซ้ำกันไหม
-- K2 table ไหนยัง update อยู่จริง (สำคัญต่อแผนเลิกใช้)
-- พอรวมแล้ว lake จะ ingest ระบบรวม หรือ 2 source
 - "ถังของพี่คอง" คืออะไรในเชิง AWS — S3 bucket หรือ staging DB
 - **ข้อมูลผู้ค้ำประกัน** จะใช้หรือไม่ใช้ (ความเห็นล่าสุด: น่าจะไม่ใช้ เพราะไม่ใช่ลูกค้าจริง)
 
@@ -116,4 +136,4 @@ FROM HPCOM7.dbo.COLLECTION_OD_ASSIGNMENT b
 
 ## อ่านต่อ
 
-[[../3 Source System Survey/UFUND (K2 & ITOS)|UFUND (K2 & ITOS)]] · [[../4 SSOT & Customer 360/Data Standardization & Quality|Data Standardization & Quality]] · [[../6 Technical/SQL & Source Schemas|SQL & Source Schemas]]
+[[../4 SSOT & Customer 360/UFUND in Customer 360|UFUND in Customer 360]] · [[../3 Source System Survey/UFUND (K2 & ITOS)|UFUND (K2 & ITOS)]] · [[../4 SSOT & Customer 360/Data Standardization & Quality|Data Standardization & Quality]] · [[../6 Technical/SQL & Source Schemas|SQL & Source Schemas]]
