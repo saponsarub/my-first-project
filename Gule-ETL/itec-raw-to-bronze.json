@@ -1,0 +1,43 @@
+{
+  "name" : "itec-raw-to-bronze",
+  "jobMode" : "SCRIPT",
+  "description" : "",
+  "role" : "arn:aws:iam::603238661233:role/Glue-Role",
+  "executionProperty" : {
+    "maxConcurrentRuns" : 1
+  },
+  "command" : {
+    "name" : "glueetl",
+    "scriptLocation" : "s3://aws-glue-assets-603238661233-ap-southeast-7/scripts/itec-raw-to-bronze.py",
+    "pythonVersion" : "3"
+  },
+  "defaultArguments" : {
+    "--SOURCE_PATH" : "s3://itecitem-raw/itec_item.csv",
+    "--TARGET_PATH" : "s3://itec-rawtobronze/bronze-itec/",
+    "--enable-glue-datacatalog" : "",
+    "--job-bookmark-option" : "job-bookmark-disable",
+    "--TempDir" : "s3://aws-glue-assets-603238661233-ap-southeast-7/temporary/",
+    "--enable-metrics" : "",
+    "--enable-spark-ui" : "true",
+    "--spark-event-logs-path" : "s3://aws-glue-assets-603238661233-ap-southeast-7/sparkHistoryLogs/",
+    "--enable-job-insights" : "true",
+    "--enable-observability-metrics" : "true",
+    "--conf" : "spark.eventLog.rolling.enabled=true --conf spark.sql.catalog.glue_catalog.glue.skip-name-validation=true",
+    "--enable-continuous-cloudwatch-log" : "true",
+    "--job-language" : "python",
+    "--JOB_NAME" : "raw_to_bronze"
+  },
+  "maxRetries" : 0,
+  "allocatedCapacity" : 10,
+  "timeout" : 480,
+  "maxCapacity" : 10.0,
+  "glueVersion" : "4.0",
+  "numberOfWorkers" : 10,
+  "workerType" : "G.1X",
+  "sourceControlDetails" : {
+    "provider" : "GITHUB",
+    "repository" : "com7-project",
+    "branch" : "aws-test",
+    "folder" : "Gule-ETL"
+  }
+}
