@@ -1,0 +1,45 @@
+# ─────────────────────────────────────────────────────────────
+#  ข้อมูลที่ห้ามขึ้น git
+# ─────────────────────────────────────────────────────────────
+
+# ไฟล์ข้อมูลลูกค้าจริง — ชื่อ เลขบัตร ที่อยู่ เบอร์โทร
+data/
+*.xlsx
+*.xls
+*.csv
+
+# ยกเว้น: metadata ของฐานที่ไม่มี PII (ใช้เป็น data dictionary)
+!COM7-Knowledge-Base/**/_raw/*.csv
+
+# ไฟล์ lock ของ Excel
+~$*
+
+# credential
+.env
+.env.*
+*credential*
+*secret*
+
+# ─────────────────────────────────────────────────────────────
+#  Python
+# ─────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# ─────────────────────────────────────────────────────────────
+#  ระบบปฏิบัติการ / เครื่องมือ
+# ─────────────────────────────────────────────────────────────
+.vs/
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Obsidian — เก็บโน้ต แต่ไม่เก็บ state ส่วนตัว
+COM7-Knowledge-Base/.obsidian/workspace.json
+COM7-Knowledge-Base/.obsidian/workspace-mobile.json
+COM7-Knowledge-Base/.trash/

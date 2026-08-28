@@ -1,0 +1,56 @@
+# ITEC Issues
+
+คำถามและงานค้างของระบบ ITEC (ฐาน MIS)
+เนื้อหา → [[ITEC Overview]] · [[ITEC - Data Dictionary]] · [[ITEC - Query Cookbook]]
+
+---
+
+## คำถามที่ต้องถามเจ้าของระบบ
+
+| # | คำถาม | ทำไมสำคัญ |
+|--:|---|---|
+| 1 | **`fact_sales_itec.Status = 1` คืออะไร** | 1.53 ล้านบรรทัด มูลค่ารวม 7.8 ล้านล้านบาท มีบรรทัดเดียว 8.4 แสนล้าน — ข้อมูลเสีย รายการทดสอบ หรือรายการยกเลิก |
+| 2 | **`SHOP_BRAND = 'Audit'` และสาขา `(73) FBI RETAIL- Cost` คืออะไร** | ยอด 19,204 ล้านบาทจาก 10,327 บิล — ทำให้ยอดขายรวมบวมผิดปกติ |
+| 3 | **ยอดขายปี 2025 = 236,494 ล้านบาท จริงไหม** | สูงกว่ารายได้ที่ COM7 ประกาศต่อสาธารณะหลายเท่า — `SalesAmount` เป็นยอดสุทธิหรือรวมอย่างอื่น |
+| 4 | **`BRANCH_STATUS` Active แค่ 50 จาก 3,205 สาขา** | น้อยผิดปกติ ฟิลด์นี้หมายถึงอะไร ควรใช้ `ClosedDate` แทนไหม |
+| 5 | **`dim_mem_itec` grain คืออะไร** | 1 บิลมีได้ถึงหลายร้อยแถว (พบ 580+ รูปแบบ) — ทำไม |
+| 6 | **`memcode` เก็บอะไรกันแน่** | 20 ความยาวปนกัน · 1.35 ล้านแถวเป็นเบอร์โทร — เป็นช่องกรอกอิสระใช่ไหม |
+| 7 | **`crmid` prefix `M01` `M02` `M04` `M06` แปลว่าอะไร** | เอกสาร CRM ระบุแค่รูปแบบ `M06xxxxxxx` |
+| 8 | **บรรทัดขาย 22.7% ไม่มีหัวบิลใน `dim_sales_header_itec`** | เป็นการขายประเภทไหน ไม่ออกใบกำกับหรือ |
+| 9 | **`SHELF_LIFE_DAY` นิยามอย่างไร** | ค่าสูงสุดที่พบ ~26 วัน ดูเหมือนคำนวณภายในเดือนเดียว ไม่ใช่อายุสะสม |
+| 10 | **`dim_officer_itec.OfficerName` เป็น `int`** | ชนิดข้อมูลผิด — ชื่อคนควรเป็นข้อความ |
+| 11 | **`CompanyCode` = `lor` และ `drl` คือบริษัทอะไร** | ไม่พบใน [[Group Structure]] |
+| 12 | **`drph` (Dr.Pharma) มี 3.6 ล้านแถว** | [[Group Structure]] ระบุว่าตัดออกจาก reference แล้ว — เป็นข้อมูลย้อนหลังหรือยังดำเนินการอยู่ |
+| 13 | **`fact_sales_itec` มีข้อมูลแค่ตั้งแต่ 2025-01-01** | ข้อมูลก่อนหน้านั้นอยู่ที่ไหน view ถูกจำกัดช่วงไว้หรือระบบเพิ่งเริ่ม |
+| 14 | **ทำไมเห็นแต่ view ไม่เห็น table** | เป็นนโยบายความปลอดภัย หรือมี schema อื่นที่ยังไม่ได้รับสิทธิ์ |
+| 15 | **view ในชั้น `ci` refresh อย่างไร** | เป็น view คำนวณสด หรือมี job materialize เบื้องหลัง |
+| 16 | **`SG Finance+` และ `Pay Next Extra` ไม่มีธุรกรรมปี 2026** | เลิกใช้แล้ว หรือบันทึกช่องทางอื่น |
+
+---
+
+## งานที่ต้องทำต่อ
+
+- [ ] ทดสอบ join `fact_trans_fo.[ITEC-ITEMNO]` กับ `dim_item_itec.ItemId`
+- [ ] ทดสอบ join `fact_sales_itec` ↔ `fact_bank_itec` ด้วย `SalesId`
+- [ ] หาว่าบัญชีที่ไม่ใช่บุคคล (เช่น `crmid` ที่มี 10,861 บิล) มีกี่ราย และตั้งกฎกรองออก
+- [ ] ทำ pattern classification ของ `memcode` เพื่อแยกเบอร์โทร / รหัสสมาชิก / อื่นๆ
+- [ ] เมื่อมี connection ไป CRM แล้ว ทดสอบ `dim_mem_itec.crmid` = `members.member_id` ว่าตรงกันกี่ %
+- [ ] ประเมินว่าจะ ingest `fact_trans_fo` (269 ล้านแถว) ทั้งหมดหรือแค่ `Transaction_Type = 'Sales order'`
+- [ ] ตัดสินใจว่าจะ materialize view ชั้น `ci` ที่ Bronze หรือ query สด (ปัจจุบันช้า 18–142 วินาที)
+
+---
+
+## ความเสี่ยงด้านความปลอดภัย
+
+| # | เรื่อง | ต้องทำ |
+|--:|---|---|
+| 1 | 🔴 **เลขบัตรเครดิตอยู่ใน 2 view** — `ci.creditcard_trn_bank` (`BANK_CC_NO`, `BANK_CREDIT_CARD_NO`, `BANK_CREDIT_CARD_NO2`) และ `rpt.raw_bank_trans` (`CC NO_`) | **ห้าม ingest** · อยู่ใต้ PCI-DSS ไม่ใช่แค่ PDPA · ถ้าจำเป็นให้ใช้ `ci.creditcard_trn_summary` ที่ไม่มีเลขบัตร |
+| 2 | 🔴 **รหัสผ่านของ user `mis_dtsci_s_sapon` อยู่ใน git history** (commit `586cab2` ไฟล์ `TESTCONNECT.py` เดิม) | **เปลี่ยนรหัสผ่าน** |
+| 3 | 🟠 ชื่อลูกค้าอยู่ใน `dim_mem_itec.Name` · `dim_sales_header_itec.Invoice_Name` · `ci.creditcard_trn_itec.ITEC_CUSTOMER_NAME` | mask ก่อนเข้า Bronze |
+| 4 | 🟡 ยังไม่รู้ว่าใครมีสิทธิ์เข้าฐานนี้บ้าง | ขอรายชื่อจากเจ้าของระบบ |
+
+---
+
+## เชื่อมกับโน้ตอื่น
+
+[[Issue Index]] · [[ITEC Overview]] · [[ITEC - Data Dictionary]] · [[ITEC - Query Cookbook]] · [[CRM Issues]] · [[Customer Identity]] · [[Consent & PDPA]]
