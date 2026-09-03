@@ -265,4 +265,4 @@ MIS จะส่งอีเมลระบุผู้รับ log ให้�
 
 ## เชื่อมกับโน้ตอื่น
 
-[[AWS Services]] · [[SQL & Source Schemas]] · [[Architecture]] · [[Athena Benchmark]]
+[[AWS Services]] · [[SQL & Source Schemas]] · [[Architecture]] · [[Athena Benchmark]] · [[Google Sheet to S3 (Lambda)]]

@@ -34,7 +34,7 @@
 
 | ระบบ | ธุรกิจ | ทำอะไร | สถานะ | ที่มา |
 |---|---|---|---|---|
-| [[ITEC Overview]] | ค้าปลีก IT | ฐาน MIS บน **SQL Server 2025** · เปิดให้เห็นเฉพาะ **23 view · 297 คอลัมน์ ไม่มี table** · star schema พร้อมชั้น clean · บรรทัดขาย 79.8M · สาขา 3,205 · สินค้า 216,009 | **Confirmed** | survey ฐานจริง 2026-08-28 |
+| [[ITEC Overview]] | ค้าปลีก IT | ฐาน MIS บน **SQL Server 2025** · เปิดให้เห็นเฉพาะ **23 view · 297 คอลัมน์ ไม่มี table** · star schema พร้อมชั้น clean · บรรทัดขาย 79.8M · สาขา 3,205 · สินค้า 216,009 | **Confirmed** | survey ฐานจริง 2026-08-28 · ความพร้อมฟิลด์ **39/77 มี · 4 ทดแทน · 21 ไม่มี · 13 ไม่ตอบ** |
 | [[K2 Overview\|K2]] | สินเชื่อเช่าซื้อ IT **(legacy — ปิดสิ้นปี 2026)** | ฐาน `HPCOM7` · **542 tables · 288,205 สัญญา · 343,249 เลขบัตรไม่ซ้ำ** · กลุ่มหลักคือนักศึกษา | **Confirmed** | survey ฐานจริง 2026-08-26 |
 | [[ITOS Overview\|ITOS]] | สินเชื่อ (collection) | `ILOAN_COLLECTION` 55 tables · ลูกค้า 165,722 ราย | Confirmed | schema wiki |
 | [[EV Business\|GI Core]] | EV / AION | ระบบหลักปัจจุบันฝั่ง GI · MySQL 166 Prisma models | Confirmed | schema.prisma · ClickUp |
@@ -64,7 +64,7 @@
 | **Gtrack Smarth** | GPS tracking รถ | To Verify — เป็น time-series ขนาดใหญ่ ต้องประเมินก่อน ingest |
 | **3CX** | ระบบโทรศัพท์ / เบอร์เสมือน | To Verify |
 | **7chat** | แชทภายในองค์กร | To Verify |
-| **ici** | ระบบประกันภัย (iCare Insurance) | To Verify — ตรงกับ 1.1.6.1 |
+| **ici** | ระบบประกันภัย (iCare Insurance) | To Verify — ตรงกับ 1.1.6.1 · **ฐานอยู่บน P&O จะย้ายไป IDS (K2) on-prem** (แจ้งด้วยวาจา 2026-09-02) → [[Other Systems]] |
 
 ### ⚠️ K2 อาจไม่ได้ให้บริการแค่ UFUND
 
@@ -76,6 +76,8 @@ Invoice Reversal · Traffic Violation · Cash Flow & Profit Analysis (ร่ว�
 ใน `HPCOM7` มีข้อมูล 2 ธุรกิจปนกัน และเกณฑ์ OD/ค่าปรับที่ทำไว้ให้ UFUND อาจใช้กับ EV ไม่ได้
 
 → ต้อง probe หาคอลัมน์ที่แยก BU · รายละเอียด [[EV China Benchmark]]
+
+**และอาจกลายเป็น 3 ธุรกิจ** — มีการแจ้งด้วยวาจา 2026-09-02 ว่าฐานข้อมูล **ICI (iCare Insurance) จะย้ายจาก P&O มาอยู่ IDS (K2) on-premise** ถ้า IDS คือฐานเดียวกับ `HPCOM7` จริง คำถามเรื่องคอลัมน์แยก BU จะยิ่งสำคัญ `[อนุมาน]` → [[Other Systems]] · [[Source System Issues]]
 
 ---
 

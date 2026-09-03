@@ -366,6 +366,200 @@ LEFT JOIN MT_STATUS s ON s.HP_STA_ID = ct.STATUS_ID   -- ใช้ STATUS_ID ไ
 WHERE o.EXTRACT_DATE = (SELECT MAX(EXTRACT_DATE) FROM COLLECTION_OD)
 ```
 
+## ดูการ์ดผ่อนรายงวด — หลายสัญญาพร้อมกัน
+
+ทดสอบ 2026-08-28 · ตอบคำถาม *"สัญญาพวกนี้ค้างงวดไหนบ้าง"*
+
+### แบบ 1 · รายการดิบ
+
+```sql
+SELECT ct.CONTRACT_NUMBER, cc.INSTALL_NUM, cc.DUEDATE, cc.INSTALL_AMT, cc.RECEIPT_NUMBER
+FROM CUSTOMER_CARD cc
+JOIN CONTRACT ct ON ct.CONTRACT_ID = cc.CONTRACT_ID
+WHERE ct.CONTRACT_NUMBER IN ('24111682','2381318','24138408')
+ORDER BY ct.CONTRACT_NUMBER, cc.INSTALL_NUM;
+```
+
+**⏱ 0.02 วินาที** · `CONTRACT_NUMBER` มี index
+
+### แบบ 2 · เติมสถานะและลำดับงวดค้าง
+
+```sql
+DECLARE @snap date = '2026-08-18';
+
+SELECT ct.CONTRACT_NUMBER            AS [เลขสัญญา],
+       cc.INSTALL_NUM                AS [งวดที่],
+       cc.DUEDATE                    AS [ครบกำหนด],
+       cc.INSTALL_AMT                AS [ค่างวด],
+       cc.RECEIPT_NUMBER             AS [เลขใบเสร็จ],
+       CASE WHEN cc.RECEIPT_NUMBER IS NOT NULL THEN N'จ่ายแล้ว'
+            WHEN cc.DUEDATE <= @snap            THEN N'ค้าง'
+            ELSE N'ยังไม่ถึงกำหนด' END          AS [สถานะ],
+       CASE WHEN cc.RECEIPT_NUMBER IS NULL AND cc.DUEDATE <= @snap
+            THEN ROW_NUMBER() OVER (
+                   PARTITION BY cc.CONTRACT_ID,
+                                CASE WHEN cc.RECEIPT_NUMBER IS NULL AND cc.DUEDATE <= @snap
+                                     THEN 1 ELSE 0 END
+                   ORDER BY cc.INSTALL_NUM)
+       END                           AS [ค้างลำดับที่],
+       cc.PENALTY_AMT                AS [ค่าปรับ],
+       cc.COLLECT_AMT                AS [ค่าติดตาม]
+FROM CUSTOMER_CARD cc
+JOIN CONTRACT ct ON ct.CONTRACT_ID = cc.CONTRACT_ID
+WHERE ct.CONTRACT_NUMBER IN ('24111682','24138408')
+ORDER BY ct.CONTRACT_NUMBER, cc.INSTALL_NUM;
+```
+
+**⏱ 0.15 วินาที** · `[ค้างลำดับที่]` = ลำดับที่ 6 คือจุดที่ครบเกณฑ์ OD6
+
+### แบบ 3 · สรุป 1 บรรทัดต่อสัญญา
+
+```sql
+DECLARE @snap date = '2026-08-18';
+
+SELECT ct.CONTRACT_NUMBER                                              AS [เลขสัญญา],
+       COUNT(*)                                                        AS [งวดทั้งหมด],
+       SUM(CASE WHEN cc.RECEIPT_NUMBER IS NOT NULL THEN 1 ELSE 0 END)  AS [จ่ายแล้ว],
+       SUM(CASE WHEN cc.RECEIPT_NUMBER IS NULL
+                 AND cc.DUEDATE <= @snap THEN 1 ELSE 0 END)            AS [ค้าง],
+       MIN(CASE WHEN cc.RECEIPT_NUMBER IS NULL THEN cc.INSTALL_NUM END) AS [ค้างงวดแรก],
+       MAX(CASE WHEN cc.RECEIPT_NUMBER IS NULL
+                 AND cc.DUEDATE <= @snap THEN cc.INSTALL_NUM END)      AS [ค้างงวดสุดท้าย],
+       SUM(CASE WHEN cc.RECEIPT_NUMBER IS NULL
+                 AND cc.DUEDATE <= @snap THEN cc.INSTALL_AMT END)      AS [ยอดค้างรวม],
+       STRING_AGG(CASE WHEN cc.RECEIPT_NUMBER IS NULL AND cc.DUEDATE <= @snap
+                       THEN CAST(cc.INSTALL_NUM AS varchar(5)) END, ',')
+           WITHIN GROUP (ORDER BY cc.INSTALL_NUM)                      AS [งวดที่ค้าง]
+FROM CUSTOMER_CARD cc
+JOIN CONTRACT ct ON ct.CONTRACT_ID = cc.CONTRACT_ID
+WHERE ct.CONTRACT_NUMBER IN (...)
+GROUP BY ct.CONTRACT_NUMBER
+ORDER BY [ค้าง] DESC;
+```
+
+**⏱ 0.02 วินาที**
+
+| เลขสัญญา | งวดทั้งหมด | จ่ายแล้ว | ค้าง | ค้างงวดแรก | ค้างงวดสุดท้าย | ยอดค้างรวม | งวดที่ค้าง |
+|---|---:|---:|---:|---:|---:|---:|---|
+| `24119356` | 24 | 11 | **13** | 12 | 24 | 22,821.89 | 12–24 |
+| `24138408` | 24 | 16 | 7 | 17 | 23 | 6,831.16 | 17–23 |
+| `24117489` | 24 | 19 | 5 | 20 | 24 | 7,193.55 | 20–24 |
+| `24106896` | 24 | 20 | 4 | 21 | 24 | 6,745.44 | 21–24 |
+| `2377877` | 24 | 21 | 3 | 22 | 24 | 6,735.60 | 22–24 |
+| `24111682` | 9 | 7 | 2 | 8 | 9 | 8,761.20 | 8,9 |
+| `2381318` | 12 | 11 | 1 | 12 | 12 | **2,262.66** | 12 |
+| `2248690` | 24 | 23 | 1 | 24 | 24 | **1,048.33** | 24 |
+
+### ถ้ารายชื่อยาว ใช้ temp table
+
+```sql
+CREATE TABLE #list (CONTRACT_NUMBER nvarchar(50) PRIMARY KEY);
+INSERT INTO #list VALUES ('24111682'),('2381318'),('24138408'); -- ...
+
+SELECT ct.CONTRACT_NUMBER, cc.INSTALL_NUM, cc.DUEDATE, cc.INSTALL_AMT, cc.RECEIPT_NUMBER
+FROM CUSTOMER_CARD cc
+JOIN CONTRACT ct ON ct.CONTRACT_ID = cc.CONTRACT_ID
+JOIN #list  l ON l.CONTRACT_NUMBER = ct.CONTRACT_NUMBER
+ORDER BY ct.CONTRACT_NUMBER, cc.INSTALL_NUM;
+
+DROP TABLE #list;
+```
+
+---
+
+## 🔴 สิ่งที่การ์ดผ่อนเปิดเผย — `OD_AMOUNT` ของ snapshot ต่ำกว่าความจริง
+
+เทียบ **ยอดค้างที่นับจากการ์ด** กับ **`COLLECTION_OD.OD_AMOUNT`** ของสัญญาเดียวกัน
+
+| เลขสัญญา | นับจากการ์ด | `OD_AMOUNT` | ต่าง |
+|---|---:|---:|---|
+| `2248690` | **1,048.33** | **0** | snapshot ไม่นับเลย |
+| `2381318` | **2,262.66** | **0** | snapshot ไม่นับเลย |
+| `24119356` | **22,821.89** | 8,777.65 | ขาดไป 14,044 |
+| `24138408` | 6,831.16 | 5,855.28 | ขาดไป 976 (= 1 งวด) |
+
+**6 สัญญาที่ `OD_AMOUNT = 0` มีเงินค้างจริงบนการ์ด 1,048–2,263 บาท** — ตรงกับ `REMAINING_OUTSTANDING` พอดี
+
+→ **ถ้าจะออกหนังสือเรียกเก็บ ให้คำนวณยอดจากการ์ดผ่อน อย่าใช้ `OD_AMOUNT` ตรงๆ**
+→ [[Collection Team Questions]] เคส 1
+
+---
+
+## ค่าปรับและค่าติดตามอยู่ในการ์ดรายงวด และไต่ขั้นจนชนเพดาน
+
+จาก `24138408` (ค่างวด 975.88 บาท)
+
+| งวด | ครบกำหนด | สถานะ | ค่าปรับ | ค่าติดตาม |
+|---:|---|---|---:|---:|
+| 15 | 2025-12-16 | จ่ายแล้ว | 100 | 0 |
+| 17 | 2026-02-16 | ค้าง (ลำดับ 1) | 100 | 0 |
+| 18 | 2026-03-16 | ค้าง (ลำดับ 2) | 200 | 100 |
+| 19 | 2026-04-16 | ค้าง (ลำดับ 3) | 300 | 200 |
+| 20 | 2026-05-16 | ค้าง (ลำดับ 4) | 400 | 300 |
+| 21 | 2026-06-16 | ค้าง (ลำดับ 5) | 500 | 400 |
+| 22 | 2026-07-16 | ค้าง (ลำดับ 6) | **600** | **500** |
+| 23 | 2026-08-16 | ค้าง (ลำดับ 7) | **600** | **500** |
+
+**ไต่ขั้นละ 100 บาทตามลำดับงวดที่ค้าง แล้วชนเพดานที่ 600 / 500** ตรงกับ [[K2 - Fee Policy]]
+
+> **`24111682` มีค่าปรับในงวดที่จ่ายแล้วด้วย** (งวด 3–7 ค่าปรับ 100 ค่าติดตาม 50)
+> = จ่ายช้าทุกงวดแต่จ่าย — ค่าปรับติดอยู่กับงวดนั้นถาวรแม้จ่ายแล้ว
+
+---
+
+## 15 · เงินเข้าจริงเมื่อไหร่ รายงวด (`REPAYMENT`)
+
+`CUSTOMER_CARD` บอกได้แค่จ่ายแล้ว/ยังไม่จ่าย **ไม่บอกวันที่เงินเข้า** — ต้องมาที่ `REPAYMENT`
+
+```sql
+SELECT c.INSTALL_NUM AS งวด, c.DUEDATE AS ครบกำหนด,
+       r.REPAY_DATE  AS เงินเข้าจริง,
+       DATEDIFF(day, c.DUEDATE, r.REPAY_DATE) AS ช้ากี่วัน,
+       r.STATUS_ID, r.RECEIPT_NUMBER,
+       r.PAY_SUM_AMT     AS ต้องจ่าย,
+       r.REPAY_SUM_AMOUNT AS จ่ายจริง
+FROM REPAYMENT r
+JOIN CUSTOMER_CARD c ON c.ID = r.CUSTOMER_CARD_ID
+WHERE r.REPAY_TYPE = 2                    -- ค่างวดเช่าซื้อ (MT_REPAY_TYPE)
+  AND r.CONTRACT_ID = 129135
+ORDER BY c.INSTALL_NUM;
+```
+
+ทดสอบ 2026-09-01 · **24 แถว** — `24129135` จ่ายงวด 19–21 รวดเดียวเมื่อ **30 ส.ค. 2026** ทั้งที่งวดครบกำหนดตั้งแต่ มี.ค.–พ.ค.
+
+| ต้องรู้ | |
+|---|---|
+| `REPAY_TYPE = 2` | ค่างวดเช่าซื้อ · 4 = ค่าติดตาม · 1 = เงินดาวน์ |
+| `STATUS_ID` | **33 = จ่ายแล้ว · 32 = ยังไม่จ่าย** (แถวสร้างรอไว้ล่วงหน้า) |
+| **`REPAY_DATE`** | **วันที่เงินเข้าจริง** — ว่างถ้ายังไม่จ่าย |
+| `PAY_*` | ยอด**ที่ต้องจ่าย** ไม่ใช่ที่จ่ายจริง — ชื่อชวนสับสน ดู [[K2 - Payment & Invoice]] |
+| `CUSTOMER_CARD_ID` | join กับ `CUSTOMER_CARD.ID` ติด 99.9998% |
+
+## 16 · ใครจ่ายเงินเข้ามาหลังวันที่คัดรายชื่อ
+
+คำถามที่ต้องตอบทุกครั้งก่อนส่งหนังสือบอกเลิก — คัดรายชื่อวันหนึ่ง ส่งจริงอีกวันหนึ่ง ระหว่างนั้นมีคนจ่าย
+
+```sql
+DECLARE @since date = '2026-08-18';
+SELECT k.CONTRACT_NUMBER,
+       MAX(r.REPAY_DATE)  AS เงินเข้าล่าสุด,
+       COUNT(*)           AS งวดที่จ่ายหลังวันคัด,
+       SUM(r.REPAY_SUM_AMOUNT) AS ยอดที่จ่ายเข้ามา
+FROM REPAYMENT r
+JOIN CONTRACT k ON k.CONTRACT_ID = r.CONTRACT_ID
+WHERE r.REPAY_TYPE = 2 AND r.STATUS_ID = 33
+  AND r.REPAY_DATE >= @since
+GROUP BY k.CONTRACT_NUMBER
+ORDER BY เงินเข้าล่าสุด DESC;
+```
+
+ทดสอบ 2026-09-01 ช่วง 18–31 ส.ค. · **32,376 สัญญา · 32,903 งวด · 55.3 ล้านบาท** ทั้งพอร์ต
+
+ใช้เป็นคอลัมน์ `_เงินเข้าจริงล่าสุดเมื่อ` และ `_งวดที่จ่ายหลังต้นเดือน` ใน `sql\k2_termination_list_v4.sql` แล้ว
+รอบ 8/2026 ตรวจแล้ว — **547 รายในรายชื่อไม่มีใครจ่ายเข้ามาเลยในเดือน ส.ค.** และ 52 รายไม่เคยจ่ายสักงวดตั้งแต่ทำสัญญา
+
+---
+
 ---
 
 ## เชื่อมกับโน้ตอื่น

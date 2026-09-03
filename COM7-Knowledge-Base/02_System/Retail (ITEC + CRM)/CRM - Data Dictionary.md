@@ -42,47 +42,47 @@ WHERE cm.citizen_no = ?;
 
 ## 1. `members` — สมาชิก (~8 ล้านคน) · 39 ฟิลด์
 
-| # | ฟิลด์ | ชนิด | คำอธิบาย |
-|--:|---|---|---|
-| 1 | `id` 🔑 | bigint unsigned | Primary Key — เชื่อมกับ `member_auth.member_id` |
-| 2 | `customer_master_id` 🔑 | bigint unsigned | เชื่อมไป `customer_master.id` |
-| 3 | `member_id` | varchar(100) | รหัสสมาชิก เช่น `M06xxxxxxx` |
-| 4 | `type` | varchar(20) | ประเภทสมาชิก |
-| 5 | `tax_id` | varchar(20) | เลขประจำตัวผู้เสียภาษี |
-| 6 | `branch_id` | varchar(20) | รหัสสาขา (Tax Branch ID) |
-| 7 | `branch_name` | varchar(200) | ชื่อสาขา |
-| 8 | `title` | varchar(50) | คำนำหน้าชื่อ |
-| 9 | `first_name` | varchar(100) | ชื่อจริง |
-| 10 | `last_name` | varchar(100) | นามสกุล |
-| 11 | `gender` | varchar(20) | เพศ |
-| 12 | `birth_date` | date | วันเกิด |
-| 13 | `age` | int | อายุ |
-| 14 | `address` | varchar(255) | ที่อยู่ปัจจุบัน (บ้านเลขที่ · หมู่ · ซอย · ถนน) |
-| 15 | `subdistrict` | varchar(100) | ตำบล |
-| 16 | `district` | varchar(100) | อำเภอ |
-| 17 | `province` | varchar(100) | จังหวัด |
-| 18 | `postcode` | varchar(5) | รหัสไปรษณีย์ |
-| 19 | `phone` | varchar(50) | เบอร์โทรศัพท์สมาชิก |
-| 20 | `email` | varchar(50) | อีเมลสมาชิก |
-| 21 | `phone_etax` | varchar(255) | เบอร์โทรศัพท์สำหรับ e-Tax |
-| 22 | `email_etax` | varchar(255) | อีเมลสำหรับ e-Tax |
-| 23 | `store_id` | varchar(20) | รหัสร้าน |
-| 24 | `itec_cuscode` 🔗 | varchar(50) | **รหัสลูกค้าฝั่ง ITEC** |
-| 25 | `itec_sended_at` | timestamp | วันเวลาที่ส่งข้อมูลไป ITEC |
-| 26 | `update_itec` | datetime | เวลาที่อัปเดตข้อมูล ITEC |
-| 27 | `verified_type` | varchar(10) | ประเภทการยืนยันตัวตน |
-| 28 | `verified_at` | timestamp | เวลายืนยันตัวตนล่าสุด |
-| 29 | `pdpa_consent` | **json** | ข้อมูลยืนยัน PDPA |
-| 30 | `career_group` | varchar(40) | กลุ่มอาชีพ |
-| 31 | `career_name` | varchar(99) | ชื่ออาชีพ |
-| 32 | `is_student` | tinyint(1) | สถานะนักศึกษา (0/1) |
-| 33 | `utm_source` | varchar(255) | UTM Source |
-| 34 | `utm_medium` | varchar(255) | UTM Medium |
-| 35 | `utm_campaign` | varchar(255) | UTM Campaign |
-| 36 | `utm_consent` | varchar(255) | UTM Consent |
-| 37 | `utm_term` | varchar(255) | UTM Term |
-| 38 | `created_at` | timestamp | วันที่เก็บข้อมูลสมาชิก |
-| 39 | `updated_at` | timestamp | วันที่อัปเดตข้อมูลล่าสุด |
+|   # | ฟิลด์                   | ชนิด            | คำอธิบาย                                        |
+| --: | ----------------------- | --------------- | ----------------------------------------------- |
+|   1 | `id` 🔑                 | bigint unsigned | Primary Key — เชื่อมกับ `member_auth.member_id` |
+|   2 | `customer_master_id` 🔑 | bigint unsigned | เชื่อมไป `customer_master.id`                   |
+|   3 | `member_id`             | varchar(100)    | รหัสสมาชิก เช่น `M06xxxxxxx`                    |
+|   4 | `type`                  | varchar(20)     | ประเภทสมาชิก                                    |
+|   5 | `tax_id`                | varchar(20)     | เลขประจำตัวผู้เสียภาษี                          |
+|   6 | `branch_id`             | varchar(20)     | รหัสสาขา (Tax Branch ID)                        |
+|   7 | `branch_name`           | varchar(200)    | ชื่อสาขา                                        |
+|   8 | `title`                 | varchar(50)     | คำนำหน้าชื่อ                                    |
+|   9 | `first_name`            | varchar(100)    | ชื่อจริง                                        |
+|  10 | `last_name`             | varchar(100)    | นามสกุล                                         |
+|  11 | `gender`                | varchar(20)     | เพศ                                             |
+|  12 | `birth_date`            | date            | วันเกิด                                         |
+|  13 | `age`                   | int             | อายุ                                            |
+|  14 | `address`               | varchar(255)    | ที่อยู่ปัจจุบัน (บ้านเลขที่ · หมู่ · ซอย · ถนน) |
+|  15 | `subdistrict`           | varchar(100)    | ตำบล                                            |
+|  16 | `district`              | varchar(100)    | อำเภอ                                           |
+|  17 | `province`              | varchar(100)    | จังหวัด                                         |
+|  18 | `postcode`              | varchar(5)      | รหัสไปรษณีย์                                    |
+|  19 | `phone`                 | varchar(50)     | เบอร์โทรศัพท์สมาชิก                             |
+|  20 | `email`                 | varchar(50)     | อีเมลสมาชิก                                     |
+|  21 | `phone_etax`            | varchar(255)    | เบอร์โทรศัพท์สำหรับ e-Tax                       |
+|  22 | `email_etax`            | varchar(255)    | อีเมลสำหรับ e-Tax                               |
+|  23 | `store_id`              | varchar(20)     | รหัสร้าน                                        |
+|  24 | `itec_cuscode` 🔗       | varchar(50)     | **รหัสลูกค้าฝั่ง ITEC**                         |
+|  25 | `itec_sended_at`        | timestamp       | วันเวลาที่ส่งข้อมูลไป ITEC                      |
+|  26 | `update_itec`           | datetime        | เวลาที่อัปเดตข้อมูล ITEC                        |
+|  27 | `verified_type`         | varchar(10)     | ประเภทการยืนยันตัวตน                            |
+|  28 | `verified_at`           | timestamp       | เวลายืนยันตัวตนล่าสุด                           |
+|  29 | `pdpa_consent`          | **json**        | ข้อมูลยืนยัน PDPA                               |
+|  30 | `career_group`          | varchar(40)     | กลุ่มอาชีพ                                      |
+|  31 | `career_name`           | varchar(99)     | ชื่ออาชีพ                                       |
+|  32 | `is_student`            | tinyint(1)      | สถานะนักศึกษา (0/1)                             |
+|  33 | `utm_source`            | varchar(255)    | UTM Source                                      |
+|  34 | `utm_medium`            | varchar(255)    | UTM Medium                                      |
+|  35 | `utm_campaign`          | varchar(255)    | UTM Campaign                                    |
+|  36 | `utm_consent`           | varchar(255)    | UTM Consent                                     |
+|  37 | `utm_term`              | varchar(255)    | UTM Term                                        |
+|  38 | `created_at`            | timestamp       | วันที่เก็บข้อมูลสมาชิก                          |
+|  39 | `updated_at`            | timestamp       | วันที่อัปเดตข้อมูลล่าสุด                        |
 
 ### จุดที่ใช้งานได้ทันที
 

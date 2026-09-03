@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "658ec8529f0c1b03",
+        "id": "2b802751a94d127e",
         "type": "tabs",
         "children": [
           {
-            "id": "f9e9f1830e1f2ea4",
+            "id": "f6a21dac3801f84a",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "02_System/Retail (ITEC + CRM)/CRM - Data Dictionary.md",
+                "file": "04_DataLake/Redshift.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CRM - Data Dictionary"
+              "title": "Redshift"
             }
           }
         ]
@@ -83,7 +83,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 240.70001220703125
   },
   "right": {
     "id": "cc49da6f15e9def8",
@@ -188,43 +188,45 @@
       "bases:Create new base": false
     }
   },
-  "active": "f9e9f1830e1f2ea4",
+  "active": "f6a21dac3801f84a",
   "lastOpenFiles": [
-    "02_System/Retail (ITEC + CRM)/CRM Overview.md",
-    "02_System/Retail (ITEC + CRM)/ITEC - Query Cookbook.md",
-    "02_System/UFUND (K2 + ITOS)/K2 Overview.md",
-    "02_System/UFUND (K2 + ITOS)/K2 - Termination Letter Mapping.md",
-    "06_Project/GI + EV7 to 7Club.md",
-    "09_Issues/CRM Issues.md",
-    "09_Issues/Customer Data Issues.md",
-    "09_Issues/Source System Issues.md",
-    "09_Issues/Pipeline Issues.md",
-    "09_Issues/K2 Issues.md",
-    "09_Issues/Issue Index.md",
-    "09_Issues/ITEC Issues.md",
-    "02_System/Retail (ITEC + CRM)/ITEC Overview.md",
-    "02_System/Retail (ITEC + CRM)/ITEC - Data Dictionary.md",
-    "00_Home/Glossary.md",
+    "04_DataLake/Network & VPN.md",
+    "04_DataLake/Glue Crawler.md",
+    "03_Data/Consent & PDPA.md",
+    "00_Home/Current Status.md",
     "00_Home/Home.md",
-    "01_Business/EV Business.md",
-    "01_Business/Group Structure.md",
     "01_Business/Retail.md",
     "01_Business/UFUND.md",
-    "04_DataLake/Architecture.md",
-    "04_DataLake/AWS Services.md",
-    "99_Archive/Archive.md",
-    "09_Issues/Open Questions & Risks.md",
     "02_System/System Inventory.md",
-    "02_System/UFUND (K2 + ITOS)/K2 - Query Cookbook.md",
+    "02_System/TBD/Other Systems.md",
+    "09_Issues/K2 Issues.md",
+    "09_Issues/Source System Issues.md",
+    "09_Issues/Pipeline Issues.md",
+    "09_Issues/Open Questions & Risks.md",
+    "08_Reference/Analytics & AI.md",
+    "08_Reference/Athena Benchmark.md",
+    "08_Reference/People & Teams.md",
+    "08_Reference/Source Inventory.md",
+    "08_Reference/SQL & Source Schemas.md",
+    "02_System/Retail (ITEC + CRM)/ITEC - Query Cookbook.md",
+    "02_System/Retail (ITEC + CRM)/CRM Overview.md",
+    "02_System/Retail (ITEC + CRM)/CRM - Data Dictionary.md",
+    "02_System/EV/EV Systems.md",
+    "00_Home/Glossary.md",
+    "01_Business/Group Structure.md",
+    "01_Business/EV Business.md",
+    "02_System/_raw/team-knowledge-K2-Database.md",
+    "02_System/_raw/UFUND-policy-ค่าปรับ-ค่าติดตาม.pdf",
+    "Untitled.base",
+    "Untitled.canvas",
+    "Untitled 1.canvas",
+    "03_Data/ITEC Data Requirement Survey.md.tmp.16328.9d1a3f500f27",
     "02_System/Retail (ITEC + CRM)/ITEC - Query Cookbook.md.tmp.8640.43031a8879f8",
     "02_System/Retail (ITEC + CRM)/ITEC - Data Dictionary.md.tmp.8640.d99fd90cf3c1",
     "02_System/_raw/itec-views.csv",
     "02_System/_raw/itec-columns.csv",
     "07_Meeting/Meeting Index.md.tmp.8640.dbb345023a72",
     "07_Meeting/2026-08",
-    "02_System/_raw/UFUND-policy-ค่าปรับ-ค่าติดตาม.pdf",
-    "02_System/EV/EV Systems.md.tmp.8640.214e04f8a702",
-    "02_System/TBD",
-    "02_System/EV"
+    "02_System/EV/EV Systems.md.tmp.8640.214e04f8a702"
   ]
 }

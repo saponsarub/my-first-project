@@ -287,12 +287,26 @@ IAM ที่ proposal มีอยู่คุมได้ระดับ bucke
 
 **Minimum requirement service อยู่ที่ไทยทั้งหมด** → ตัดประเด็น PDPA เรื่องข้อมูลออกนอกประเทศไปได้
 
-**ยกเว้น 2 ตัวที่ยังไม่อยู่ที่ไทย:**
+**ยกเว้นตัวที่ยังไม่อยู่ที่ไทย:**
 
 | Service | ใช้ทำอะไร | ต้องทำอะไร |
 |---|---|---|
 | **Macie** | detect ข้อมูล sensitive / personal | ประเมินผลกระทบ PDPA แยก |
-| **SNS** | แจ้งเตือนผลจาก Macie | ประเมินผลกระทบ PDPA แยก |
+| **SES** | ส่งอีเมล | **ประเมินผลกระทบ PDPA** — ถ้าแนบไฟล์ที่มี PII จะออกนอกประเทศ → [[K2 Termination Automation]] |
+
+### ตรวจความพร้อมของ region ใหม่ 2026-09-03
+
+ตรวจจากเอกสาร endpoint ทางการของ AWS — **แก้ข้อมูลเดิมที่บันทึกว่า SNS ยังไม่อยู่ที่ไทย**
+
+| Service | ap-southeast-7 | ที่มา |
+|---|---|---|
+| **SNS** | **มี** — `sns.ap-southeast-7.amazonaws.com` | [SNS endpoints](https://docs.aws.amazon.com/general/latest/gr/sns.html) |
+| **SES** | **ไม่มี** | [SES endpoints](https://docs.aws.amazon.com/general/latest/gr/ses.html) |
+| Redshift + Redshift Serverless | มี | [Redshift endpoints](https://docs.aws.amazon.com/general/latest/gr/redshift-service.html) · [[Redshift]] |
+
+บันทึกเดิมจาก PoC review ระบุว่า SNS ยังไม่อยู่ที่ไทย — น่าจะเป็นข้อมูล ณ ตอนทำ PoC แล้ว service เพิ่งเข้ามาทีหลัง `[อนุมาน]`
+
+**ประเด็นที่ต้องประเมินใหม่คือ SES ไม่ใช่ SNS** — งานไหนที่ต้องส่งอีเมลพร้อมไฟล์ที่มี PII จะติดเรื่องข้อมูลข้ามพรมแดน
 
 **QuickSight ยังไม่มีแผนเปิดที่ไทย** → ต้องหาทางเลือก BI อื่น
 
@@ -306,4 +320,4 @@ IAM ที่ proposal มีอยู่คุมได้ระดับ bucke
 
 ## เชื่อมกับโน้ตอื่น
 
-[[Architecture]] · [[ETL & Spark]] · [[Athena Benchmark]]
+[[Architecture]] · [[ETL & Spark]] · [[Athena Benchmark]] · [[Redshift]]

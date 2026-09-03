@@ -47,20 +47,20 @@
 **บรรทัดขายรายชิ้น — view ที่สำคัญที่สุดของระบบ**
 79,828,304 แถว · 2,269,383 บิลไม่ซ้ำ · ช่วงข้อมูล **2025-01-01 → 2026-08-09**
 
-| ฟิลด์ | ชนิด | คำอธิบาย |
-|---|---|---|
-| `SalesId` 🔑 | int | เลขที่บิลขาย — ใช้คู่กับ `SalesBranch` เสมอ ไม่ unique เดี่ยวๆ |
-| `SalesBranch` 🔑 | int | รหัสสาขาที่ขาย → `dim_branch_itec.Branch` |
-| `ItemId` 🔗 | varchar | รหัสสินค้า → `dim_item_itec.ItemId` (จับคู่ได้ 100%) |
-| `SerialNo` | varchar | หมายเลขเครื่อง — ใช้ตามรอยเครื่องรายตัว |
-| `SalesQty` | int | จำนวนที่ขาย |
-| `SalesAmount` | numeric | ยอดขาย |
-| `CostAmount` | numeric | ต้นทุน |
-| `GPAmount` | numeric | กำไรขั้นต้น = `SalesAmount − CostAmount` |
-| `GP %` | float | อัตรากำไรขั้นต้น — **ชื่อคอลัมน์มีช่องว่างและ `%` ต้องครอบด้วย `[ ]`** |
-| **`Status`** | int | **0 = ปกติ (78,301,982) · 1 = ผิดปกติ (1,526,322)** |
-| `SalesCrDatetime` | datetime2 | เวลาที่สร้างรายการ |
-| `SalesOfficerId` 🔗 | int | พนักงานขาย → `dim_officer_itec.OfficerID` |
+| ฟิลด์               | ชนิด      | คำอธิบาย                                                               |
+| ------------------- | --------- | ---------------------------------------------------------------------- |
+| `SalesId` 🔑        | int       | เลขที่บิลขาย — ใช้คู่กับ `SalesBranch` เสมอ ไม่ unique เดี่ยวๆ         |
+| `SalesBranch` 🔑    | int       | รหัสสาขาที่ขาย → `dim_branch_itec.Branch`                              |
+| `ItemId` 🔗         | varchar   | รหัสสินค้า → `dim_item_itec.ItemId` (จับคู่ได้ 100%)                   |
+| `SerialNo`          | varchar   | หมายเลขเครื่อง — ใช้ตามรอยเครื่องรายตัว                                |
+| `SalesQty`          | int       | จำนวนที่ขาย                                                            |
+| `SalesAmount`       | numeric   | ยอดขาย                                                                 |
+| `CostAmount`        | numeric   | ต้นทุน                                                                 |
+| `GPAmount`          | numeric   | กำไรขั้นต้น = `SalesAmount − CostAmount`                               |
+| `GP %`              | float     | อัตรากำไรขั้นต้น — **ชื่อคอลัมน์มีช่องว่างและ `%` ต้องครอบด้วย `[ ]`** |
+| **`Status`**        | int       | **0 = ปกติ (78,301,982) · 1 = ผิดปกติ (1,526,322)**                    |
+| `SalesCrDatetime`   | datetime2 | เวลาที่สร้างรายการ                                                     |
+| `SalesOfficerId` 🔗 | int       | พนักงานขาย → `dim_officer_itec.OfficerID`                              |
 
 > ⚠️ **`Status = 1` มียอดรวม 7.8 ล้านล้านบาท** (มากกว่า Status 0 ถึง 25 เท่า) และมีบรรทัดเดียวที่ 837,948,011,738 บาท
 > **ต้องใส่ `WHERE Status = 0` ทุกครั้ง**
@@ -73,16 +73,16 @@
 
 **ธุรกรรมบัตรที่บันทึกฝั่ง ITEC** · 18,294,666 แถว · **2023-01-01 → 2026-08-09**
 
-| ฟิลด์ | ชนิด | คำอธิบาย |
-|---|---|---|
-| `SalesId` 🔗 | int | เชื่อมกลับไป `fact_sales_itec.SalesId` |
-| `STORE ID` | int | รหัสร้าน — ชื่อมีช่องว่าง ต้องครอบ `[ ]` |
-| `TYPE` 🔗 | varchar | วิธีชำระเงิน → `ci.trn_category_ITEC.TYPE` |
-| `LAST 4-DIGIT` | varchar | 🟡 4 ตัวท้ายบัตร |
+| ฟิลด์           | ชนิด    | คำอธิบาย                                       |
+| --------------- | ------- | ---------------------------------------------- |
+| `SalesId` 🔗    | int     | เชื่อมกลับไป `fact_sales_itec.SalesId`         |
+| `STORE ID`      | int     | รหัสร้าน — ชื่อมีช่องว่าง ต้องครอบ `[ ]`       |
+| `TYPE` 🔗       | varchar | วิธีชำระเงิน → `ci.trn_category_ITEC.TYPE`     |
+| `LAST 4-DIGIT`  | varchar | 🟡 4 ตัวท้ายบัตร                               |
 | `APPROVAL CODE` | varchar | รหัสอนุมัติจากธนาคาร — ใช้จับคู่กับ settlement |
-| `TRANS AMT` | decimal | ยอดรูด |
-| `TERMINAL ID` | varchar | เครื่อง EDC |
-| `TRANS DATE` | date | วันที่รูด |
+| `TRANS AMT`     | decimal | ยอดรูด                                         |
+| `TERMINAL ID`   | varchar | เครื่อง EDC                                    |
+| `TRANS DATE`    | date    | วันที่รูด                                      |
 
 ---
 

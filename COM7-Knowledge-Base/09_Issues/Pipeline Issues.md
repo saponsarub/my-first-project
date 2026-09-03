@@ -18,6 +18,47 @@
 
 ---
 
+## K2 Termination Automation — เรื่องที่ต้องตัดสินใจก่อนลงมือ
+
+เนื้อหา → [[K2 Termination Automation]] · ยังเป็นข้อเสนอ ยังไม่ได้ลงมือ
+
+- [ ] **"📧 USER" ผู้รับอีเมลคือใคร** — ทีมติดตามหนี้ภายใน หรือตัวลูกค้าเอง · ถ้าเป็นลูกค้า **ขั้นให้คนอนุมัติก่อนส่งจำเป็น ไม่ใช่ทางเลือก** → **หัวหน้าทีมติดตามหนี้**
+- [ ] **SES ไม่มีที่ ap-southeast-7** — เลือกทางไหน: presigned URL (แนะนำ) · SMTP ของบริษัท · หรือ SES สิงคโปร์ (ต้องให้ legal เคลียร์เรื่อง PII ข้ามพรมแดน) → **legal / DPO**
+- [ ] เลือก compute: **ECS Fargate** (เสนอ) หรือ Lambda container image
+- [ ] เลือกวิธีทำ PDF: LibreOffice headless หรือ reportlab · และหาฟอนต์ไทยที่มีสิทธิ์ใช้เชิงพาณิชย์
+- [ ] ตกลงว่าจะเก็บ audit trail ว่าใครได้รับหนังสือเมื่อไหร่ไว้ที่ไหน (เสนอ DynamoDB)
+- [ ] **connection string ยังเป็น public IP** — ต้องเปลี่ยนเป็น private IP ตอนย้ายไปวิ่งผ่าน VPN → [[Network & VPN]]
+
+---
+
+## Redshift — เรื่องที่ต้องหาคำตอบก่อนตัดสินใจ
+
+เนื้อหา → [[Redshift]] · **ยังไม่ได้ตัดสินใจว่าจะใช้หรือไม่**
+
+*(ปิดแล้ว 2026-09-02: ap-southeast-7 มีทั้ง Redshift Serverless และ Provisioned · Serverless GA ที่ไทยตั้งแต่ มี.ค. 2025 — ไม่ติดข้อกำหนด PDPA ดู [[Redshift]])*
+
+- [ ] PoC review บันทึกว่า Spectrum "แพงมาก" — **ประเมินบนฐาน Provisioned ($5/TB แยก) หรือ Serverless (รวมใน RPU) ?** ขอตัวเลขจริงด้วยว่า scan เท่าไหร่ query แบบไหน → **คนที่ทำ PoC** · ดู [[Redshift]]
+- [ ] มี dashboard ที่ต้องใช้ทุกวันจริงไหม — ถ้าไม่มี [[Athena Benchmark|Athena]] ยังพอ ยังไม่ต้องเปิด Redshift
+- [ ] ถ้าเปิดใช้ ต้องตกลง VARCHAR ของฟิลด์ข้อความไทยให้เผื่อ 3–4 เท่า (byte ไม่ใช่ตัวอักษร) → [[Data Standardization & Quality]]
+- [ ] QuickSight ไม่มีที่ไทย — ถ้าเลือก BI ตัวอื่น ตัวนั้นต่อ Redshift หรือ Athena ได้ไหม → [[Analytics & AI]]
+
+---
+
+## Google Sheet → S3 (Lambda) — งานที่ต้องทำต่อ
+
+เนื้อหา → [[Google Sheet to S3 (Lambda)]] · deploy สำเร็จ 2026-09-02 · ยังเป็นฟังก์ชันทดลอง (`test-ingest-googlesheet`)
+
+- [ ] เติม log ให้ครบตาม [[ETL & Spark|ข้อกำหนดที่ตกลง 2026-08-27]] — จำนวนแถวปลายทางเทียบต้นทาง · timestamp เริ่ม-เสร็จ · โหมดเขียน
+- [ ] ผูก **EventBridge schedule** เข้ารอบ 23:30 น. (ตอนนี้ยัง manual trigger)
+- [ ] ยืนยันว่า `leads-ev7-2026.csv` มี PII จริงไหม ถ้ามีต้องเข้ากติกา [[Consent & PDPA]] และตรวจ bucket policy / encryption ของ `google-sheet-extract`
+- [ ] ตกลงว่าจะเก็บประวัติย้อนหลังไหม — ตอนนี้เขียนทับ key เดิมทุกรอบ ไม่มี partition ตามวันที่
+- [ ] ตั้ง CloudWatch alarm บน error/timeout ของฟังก์ชัน
+- [ ] ป้องกัน schema drift — คนแก้คอลัมน์ในชีตได้ตลอดโดย pipeline ไม่รู้ตัว → [[Data Standardization & Quality]]
+- [ ] ย้าย library ไป **Lambda Layer** เพื่อให้ zip โค้ดเหลือไม่กี่ KB (ตอนนี้ 5.9 MB แก้ใน Console ไม่ได้)
+- [ ] เปลี่ยนชื่อฟังก์ชัน/role จาก `test-*` ถ้าจะใช้จริง
+
+---
+
 ## Collection Union (K2 + ITOS) — งานที่ต้องทำต่อ
 
 เนื้อหา → [[Collection Union (K2 + ITOS)]]

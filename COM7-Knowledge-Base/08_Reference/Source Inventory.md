@@ -82,6 +82,8 @@ vault เวอร์ชันแรกอ้างไฟล์นี้เป�
 | 30 | `ITEC product dimension.txt` | SQL ที่ทีมใช้สร้าง `ci.clean_item_category_itec` — flag 66 ตัวจาก LIKE | เข้าใจที่มาของฟิลด์ `IS_*` → [[ITEC - Data Dictionary]] |
 | 31 | `scripts/legacy/TESTCONNECT.py` | สคริปต์เชื่อมต่อฐาน MIS ของทีม | จุดตั้งต้นของการสำรวจ · 🔴 รหัสผ่านเดิมอยู่ใน git history |
 
+| 32 | `Copy of ITEC data requirement_reply1.xlsx` | แบบสำรวจ 77 ฟิลด์ที่ Data Lake ต้องการจากค้าปลีก + คำตอบจากเจ้าของระบบ | 39 มี / 4 ทดแทน / 21 ไม่มี / 13 ไม่ตอบ → [[ITEC Data Requirement Survey]] |
+
 **ไฟล์ผลลัพธ์:** `02_System/_raw/itec-views.csv` · `02_System/_raw/itec-columns.csv`
 
 ---

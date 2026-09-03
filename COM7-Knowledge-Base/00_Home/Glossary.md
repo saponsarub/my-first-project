@@ -4,28 +4,28 @@
 
 ## Systems and names in COM7 documents
 
-| คำ | ความหมาย | ที่มา |
-|---|---|---|
-| **ITEC** | ระบบหลักธุรกิจค้าปลีก IT · ระบบเดียวที่ป้อน CRM ตอนนี้ | Data Framework, Timeline |
-| **K2** | ระบบสินเชื่อเดิมของ UFUND · ฐาน `HPCOM7` | ClickUp, union SQL |
-| **ITOS** | ระบบ collection ของ UFUND · ฐาน `ILOAN_COLLECTION` | schema wiki |
-| **TFF** | บริษัท ธันเดอร์ ฟิน ฟิน จำกัด | `M_COMPANY` ใน ITOS |
-| **UFund / UFUND** | ธุรกิจสินเชื่อ อยู่ใต้ TFF ตาม Timeline | Timeline |
-| **GI / GI CORE** | ระบบหลักปัจจุบันฝั่ง EV/AION | ClickUp, schema.prisma |
-| **AION** | แบรนด์รถ EV | ClickUp |
-| **AION DMS** | ระบบ vendor — บันทึกเขียนว่า "ของจีน" | ClickUp |
-| **EV7 / EV7CORE** | ธุรกิจและระบบฝั่ง EV7 | Timeline, ClickUp |
-| **EVTRACKING** | ระบบที่ยังมีบางรายการของ GI ค้างอยู่ | ClickUp |
-| **EVSEVEN** | ชื่อ BU ใน brief เดิม | brief |
-| **D365** | Dynamics 365 · ข้อมูลผ่าน `D365FO_DATALAKE` | Timeline, SQL |
-| **SAP B1** | SAP Business One | Timeline |
-| **iCare** | ประกันอุปกรณ์ + mobile service | Timeline |
-| **7Club / 7Club+** | โปรแกรมสมาชิก | Data Framework, Timeline |
-| **Tech Trade / Tectrade** | ธุรกิจเทิร์นเครื่อง | Timeline, Gap Review |
-| **Braze** | platform ส่งข้อความและแคมเปญที่ทีม CRM ใช้ | Data Framework |
-| **BaNANA / BNN** | แบรนด์ค้าปลีก | `M_COMPANY`, Gap Review |
-| **Studio7** | แบรนด์ค้าปลีก | `M_COMPANY`, ClickUp |
-| **Alphametrics** | vendor ที่เขียนคู่มือ Azure Synapse | PDF ใน `D:\Azure\` |
+| คำ                        | ความหมาย                                               | ที่มา                    |
+| ------------------------- | ------------------------------------------------------ | ------------------------ |
+| **ITEC**                  | ระบบหลักธุรกิจค้าปลีก IT · ระบบเดียวที่ป้อน CRM ตอนนี้ | Data Framework, Timeline |
+| **K2**                    | ระบบสินเชื่อเดิมของ UFUND · ฐาน `HPCOM7` · **ทีม dev ของบริษัทเขียนเอง · on-premise** | ClickUp, union SQL, แจ้งด้วยวาจา 2026-09-02 |
+| **ITOS**                  | ระบบ collection ของ UFUND · ฐาน `ILOAN_COLLECTION`     | schema wiki              |
+| **TFF**                   | บริษัท ธันเดอร์ ฟิน ฟิน จำกัด                          | `M_COMPANY` ใน ITOS      |
+| **UFund / UFUND**         | ธุรกิจสินเชื่อ อยู่ใต้ TFF ตาม Timeline                | Timeline                 |
+| **GI / GI CORE**          | ระบบหลักปัจจุบันฝั่ง EV/AION                           | ClickUp, schema.prisma   |
+| **AION**                  | แบรนด์รถ EV                                            | ClickUp                  |
+| **AION DMS**              | ระบบ vendor — บันทึกเขียนว่า "ของจีน"                  | ClickUp                  |
+| **EV7 / EV7CORE**         | ธุรกิจและระบบฝั่ง EV7                                  | Timeline, ClickUp        |
+| **EVTRACKING**            | ระบบที่ยังมีบางรายการของ GI ค้างอยู่                   | ClickUp                  |
+| **EVSEVEN**               | ชื่อ BU ใน brief เดิม                                  | brief                    |
+| **D365**                  | Dynamics 365 · ข้อมูลผ่าน `D365FO_DATALAKE`            | Timeline, SQL            |
+| **SAP B1**                | SAP Business One                                       | Timeline                 |
+| **iCare**                 | ประกันอุปกรณ์ + mobile service                         | Timeline                 |
+| **7Club / 7Club+**        | โปรแกรมสมาชิก                                          | Data Framework, Timeline |
+| **Tech Trade / Tectrade** | ธุรกิจเทิร์นเครื่อง                                    | Timeline, Gap Review     |
+| **Braze**                 | platform ส่งข้อความและแคมเปญที่ทีม CRM ใช้             | Data Framework           |
+| **BaNANA / BNN**          | แบรนด์ค้าปลีก                                          | `M_COMPANY`, Gap Review  |
+| **Studio7**               | แบรนด์ค้าปลีก                                          | `M_COMPANY`, ClickUp     |
+| **Alphametrics**          | vendor ที่เขียนคู่มือ Azure Synapse                    | PDF ใน `D:\Azure\`       |
 
 ---
 

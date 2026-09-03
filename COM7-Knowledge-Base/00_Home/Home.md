@@ -46,6 +46,7 @@
 | ค่าเบี้ยปรับ / ค่าติดตามคิดยังไง | [[K2 - Fee Policy]] |
 | **คัดสัญญาเพื่อบอกเลิก** ยังไง | [[K2 - OD6 Selection Logic]] |
 | ไฟล์ OD6 ที่ส่งทีมติดตามจริง | [[OD6 Collection Delivery]] |
+| **ทำงานออกหนังสือบอกเลิกให้อัตโนมัติบน AWS** | [[K2 Termination Automation]] |
 | กรอกหนังสือบอกเลิกสัญญา เอาข้อมูลจากไหน | [[K2 - Termination Letter Mapping]] |
 
 ### ข้อมูลและ Data Lake — `03_Data` · `04_DataLake` · `05_ETL`
@@ -56,11 +57,15 @@
 | PDPA / consent | [[Consent & PDPA]] |
 | ข้อมูลแต่ละระบบไม่เป็นมาตรฐานเดียวกัน | [[Data Standardization & Quality]] |
 | ฟิลด์ลูกค้าที่ต้องการ มีใน K2 ไหม | [[K2 Customer Field Survey]] |
+| ฟิลด์ค้าปลีกที่ต้องการ มีใน ITEC ไหม | [[ITEC Data Requirement Survey]] |
 | UFUND เข้า Customer 360 ยังไง | [[UFUND in Customer 360]] |
 | สถาปัตยกรรม AWS | [[Architecture]] · [[AWS Services]] |
+| **เริ่มใช้ Redshift ยังไง · โหลดจาก S3 · ให้สิทธิ์ยังไง** | [[Redshift]] |
+| **ตั้ง Glue Crawler ยังไงไม่ให้ตารางแตก · วางโครงสร้าง S3** | [[Glue Crawler]] |
 | เชื่อมเครือข่าย on-prem ↔ AWS | [[Network & VPN]] |
 | เขียน Glue job ยังไง | [[ETL & Spark]] |
 | รวมข้อมูล collection K2 + ITOS | [[Collection Union (K2 + ITOS)]] |
+| **แพ็ก Lambda ยังไง ทำไมต้อง build บน Linux** | [[Google Sheet to S3 (Lambda)]] |
 
 ### สถานะ · ปัญหา · อ้างอิง
 
@@ -91,10 +96,10 @@
                 ├── TBD/                  Other Systems
                 └── _raw/                 ไฟล์ดิบ · sample ที่ mask แล้ว
 03_Data/        Customer Identity · Consent & PDPA · Data Standardization · Customer 360 · K2 Field Survey
-04_DataLake/    Architecture · AWS Services · Network & VPN · Decisions
-05_ETL/         ETL & Spark · Collection Union (K2 + ITOS)
+04_DataLake/    Architecture · AWS Services · Network & VPN · Decisions · Redshift · Glue Crawler
+05_ETL/         ETL & Spark · Collection Union (K2 + ITOS) · Google Sheet to S3 (Lambda)
 06_Project/     K2 + ITOS Integration · GI + EV7 → 7Club · OD6 Collection Delivery
-                Data Framework Scope · SSOT Roadmap
+                Data Framework Scope · SSOT Roadmap · K2 Termination Automation
 07_Meeting/     บันทึกประชุม (ภาษาไทย)
 08_Reference/   Source Inventory · People & Teams · SQL & Source Schemas
                 Analytics & AI · Athena Benchmark · EV China Benchmark

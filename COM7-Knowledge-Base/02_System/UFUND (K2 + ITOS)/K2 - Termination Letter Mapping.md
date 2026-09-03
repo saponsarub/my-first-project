@@ -30,6 +30,8 @@ CONTRACT (CONTRACT_NUMBER)
 > ทำเป็น Excel: `scripts/k2/k2_termination_v2_to_excel.py` (คอลัมน์ตัวหนังสือเขียนเป็นสูตร `=BAHTTEXT` ให้อัตโนมัติ)
 > ตรรกะการคัด → [[K2 - OD6 Selection Logic]]
 
+> **วิธีคิดฉบับเต็ม + SQL อธิบายทีละขั้น → [[K2 - Termination Letter How-To]]**
+
 ## Mapping table — 33 columns
 
 | # | คอลัมน์ในหนังสือ | ที่มา | หลักการคิด |

@@ -67,20 +67,100 @@ CONTRACT ──► CUSTOMER_CARD ──► INVOICE ──► REPAYMENT ──►
 
 การรับชำระจริง ครอบคลุม 287,553 สัญญา
 
-**โครงสร้างสองชั้น: `REPAY_*` = ยอดที่ต้องชำระ · `PAY_*` = ยอดที่ชำระจริง**
+> ⚠️ **แก้ 2026-09-01 — เดิมโน้ตนี้เขียนสลับกัน** ตรวจกับข้อมูลจริงแล้วเป็นตรงข้าม
 
-| ชั้น | คอลัมน์ |
-|---|---|
-| ต้องชำระ | `REPAY_DATE`, `REPAY_NAME`, `REPAY_AMOUNT`, `REPAY_PENALTY`, `REPAY_COLLECT`, `REPAY_VAT`, `REPAY_WHT`, `REPAY_DISCOUNT`, `REPAY_SUM_AMOUNT` |
-| ชำระจริง | `PAY_DATE`, `PAY_NAME`, `PAY_AMT`, `PAY_PENALTY`, `PAY_COLLECT`, `PAY_VAT`, `PAY_DISCOUNT`, `PAY_SUM_AMT` |
-| ส่วนต่าง | **`OVER_AMT`** (ชำระเกิน) · **`LACK_AMT`** (ชำระขาด) |
-| ยกเว้น | `PENALTY_WAVE_AMT`, `COLLECT_WAVE_AMT` |
-| เงินสำรอง | `RESERVE_AMOUNT`, `FLAG_RESERVE`, `USE_RESERVE_AMT` |
-| ปิดก่อนกำหนด | **`FLAG_EARLY_CLOSE`** |
-| เอกสาร | `RECEIPT_NUMBER`, `TAX_NUMBER`, `PHY_NUMBER`, `CREDIT_NOTE_NUMBER` |
-| เชื่อม | `CONTRACT_ID`, `CUSTOMER_CARD_ID`, `APP_ID`, `INVOICE_ID`, `BANK_CODE` |
+## ⭐ ตารางนี้บอก "จ่ายงวดไหน เมื่อไหร่" — สิ่งที่ `CUSTOMER_CARD` บอกไม่ได้
 
-**`OVER_AMT` / `LACK_AMT` มีอยู่จริง** → ลูกค้าชำระไม่ตรงยอดเป็นเรื่องปกติ ระบบรองรับไว้ ไม่ควรสมมติว่ายอดชำระ = ยอดงวด `[อนุมาน]`
+`CUSTOMER_CARD` บอกได้แค่ *จ่ายแล้ว/ยังไม่จ่าย* (`RECEIPT_NUMBER` ว่างหรือไม่ว่าง)
+**`REPAYMENT` บอกวันที่เงินเข้าจริงรายงวด** — จำเป็นทุกครั้งที่ต้องตอบว่า *"คนนี้จ่ายมาหลังเราส่งรายชื่อไปหรือเปล่า"*
+
+```sql
+-- ประวัติการจ่ายรายงวดของสัญญาหนึ่ง
+SELECT c.INSTALL_NUM, c.DUEDATE, r.REPAY_DATE AS วันที่เงินเข้าจริง,
+       r.STATUS_ID, r.RECEIPT_NUMBER, r.REPAY_SUM_AMOUNT
+FROM REPAYMENT r
+JOIN CUSTOMER_CARD c ON c.ID = r.CUSTOMER_CARD_ID
+WHERE r.REPAY_TYPE = 2 AND r.CONTRACT_ID = 129135
+ORDER BY c.INSTALL_NUM;
+```
+
+**ตัวอย่างจริง `24129135`** (`CONTRACT_ID` 129135) — เคสที่เคยสงสัยว่าทำไมอยู่ในรายชื่อบอกเลิกทั้งที่ค้างแค่ 3 งวด
+
+| งวด | ครบกำหนด | วันที่เงินเข้าจริง | สถานะ |
+|---:|---|---|---|
+| 18 | 2026-02-01 | 2026-02-18 | 33 จ่ายแล้ว |
+| 19 | 2026-03-01 | **2026-08-30** | 33 จ่ายแล้ว |
+| 20 | 2026-04-01 | **2026-08-30** | 33 จ่ายแล้ว |
+| 21 | 2026-05-01 | **2026-08-30** | 33 จ่ายแล้ว |
+| 22 | 2026-06-01 | – | 32 ยังค้าง |
+| 23 | 2026-07-01 | – | 32 ยังค้าง |
+| 24 | 2026-08-01 | – | 32 ยังค้าง |
+
+**จ่าย 3 งวดรวดเมื่อ 30 ส.ค.** หลังรายชื่อถูกคัดไปตั้งแต่ 3 ส.ค. — snapshot บอก 5 งวด การ์ดวันนี้บอก 3 งวด
+`REPAYMENT` เป็นตัวเดียวที่อธิบายช่องว่างนี้ได้
+
+### `CUSTOMER_CARD_ID` — join ที่เชื่อถือได้
+
+```sql
+JOIN CUSTOMER_CARD c ON c.ID = r.CUSTOMER_CARD_ID
+```
+
+ทดสอบ 2026-09-01 กับ 1,033,171 แถวปี 2026 — **join ติด 1,033,169 (99.9998%)** และ `r.INSTALL = c.INSTALL_NUM` ตรงกันทุกแถวที่ join ติด
+**เป็น join ที่แน่นที่สุดเส้นหนึ่งในฐานนี้** ต่างจาก join อื่นที่ต้องเดาจากชื่อคอลัมน์
+
+### ⚠️ `PAY_*` = ที่ต้องชำระ · `REPAY_*` = ที่ชำระจริง — **ตรงข้ามกับที่ชื่อชวนคิด**
+
+| ชั้น | คอลัมน์ | ความหมาย |
+|---|---|---|
+| **`PAY_*`** | `PAY_DATE`, `PAY_AMT`, `PAY_PENALTY`, `PAY_COLLECT`, `PAY_VAT`, `PAY_DISCOUNT`, `PAY_SUM_AMT`, `PAY_NAME` | **ยอดที่ต้องชำระ** — มีค่าตั้งแต่ตอนสร้างแถว |
+| **`REPAY_*`** | `REPAY_DATE`, `REPAY_AMOUNT`, `REPAY_PENALTY`, `REPAY_COLLECT`, `REPAY_VAT`, `REPAY_WHT`, `REPAY_DISCOUNT`, `REPAY_SUM_AMOUNT`, `REPAY_NAME` | **ยอดที่ชำระจริง** — ว่างจนกว่าจะจ่าย |
+
+**หลักฐาน** — แถวที่ยังไม่จ่าย (`STATUS_ID = 32`) 84,264 แถว
+
+| | ว่างกี่แถว |
+|---|---:|
+| `REPAY_DATE` | **84,263** |
+| `REPAY_SUM_AMOUNT` | **84,263** |
+| `PAY_SUM_AMT` | **0** |
+| `PAY_DATE` | 115 |
+
+ระบบสร้างแถวรอไว้ล่วงหน้าพร้อมยอดที่ต้องจ่าย (`PAY_*`) แล้วเติม `REPAY_*` ตอนเงินเข้าจริง
+
+> **ถ้าจะรู้ว่าเงินเข้าเมื่อไหร่ ใช้ `REPAY_DATE` · ถ้าจะรู้ว่าต้องจ่ายเท่าไหร่ ใช้ `PAY_SUM_AMT`**
+> ใช้สลับกันจะได้ผลว่าทุกคนจ่ายครบตรงเวลา
+
+### สูตรยอดเงิน — ตรวจแล้ว 1,056,588 แถวปี 2026
+
+| สูตร | ตรง |
+|---|---:|
+| `PAY_AMT + PAY_VAT = CUSTOMER_CARD.INSTALL_AMT` | 99.46% |
+| `PAY_SUM_AMT = PAY_AMT + PAY_VAT + PAY_PENALTY + PAY_COLLECT` | 99.44% |
+| `REPAY_AMOUNT ≈ PAY_AMT` (จ่ายตรงยอด) | 99.84% |
+
+**`PAY_AMT` ไม่ใช่ค่างวด** — เป็นยอดก่อน VAT ค่างวดเต็มคือ `PAY_AMT + PAY_VAT`
+ตัวอย่าง `24129135`: 1,681.46 + 117.70 = **1,799.16** = `INSTALL_AMT` · บวกค่าปรับ 100 + ค่าติดตาม 50 = `PAY_SUM_AMT` 1,949.16
+
+### `STATUS_ID` — ใช้ 2 ค่าหลัก
+
+| รหัส | `MT_STATUS` | แถว (`REPAY_TYPE=2`) | ความหมายจริง |
+|---:|---|---:|---|
+| **33** | Repay Complete | 4,255,575 | **จ่ายแล้ว** |
+| **32** | Wait Repay by Transaction | 141,110 | **ยังไม่จ่าย** — แถวที่สร้างรอไว้ |
+| 30 | In active | 610 | ซากข้อมูล |
+
+**ตรงกับการ์ด 99.7%** — ตรวจกับ `CUSTOMER_CARD.RECEIPT_NUMBER` งวดปี 2026
+
+| | การ์ดมีใบเสร็จ | การ์ดยังค้าง |
+|---|---:|---:|
+| `STATUS_ID = 33` | **1,053,090** | 3,466 |
+| `STATUS_ID = 32` | 79 | **57,503** |
+
+### `PAY_DATE` ตรงกับ `DUEDATE` แค่ 54% — ยังไม่รู้สาเหตุ
+
+จาก 1,056,577 แถวปี 2026 `PAY_DATE = DUEDATE` แค่ 566,237 แถว
+เคสตัวอย่างที่ดูตรงทุกงวด แต่ทั้งพอร์ตไม่ตรง — **อย่าใช้ `PAY_DATE` แทนวันครบกำหนด ให้ join เอา `DUEDATE` จากการ์ด** `[อนุมาน]`
+
+ส่วน `REPAY_DATE` เทียบ `DUEDATE`: จ่ายก่อนกำหนด 490,411 · ตรงวัน 314,468 · จ่ายสาย 251,698
 
 ### Incoming payments are allocated horizontally
 
